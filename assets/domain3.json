@@ -1,0 +1,449 @@
+{
+  "id": "domain3",
+  "name": "Resilient Cloud Solutions",
+  "icon": "🛡️",
+  "percentage": 15,
+  "color": "green",
+  "questions": [
+    {
+      "id": 1,
+      "question": "Application requires RTO of 15 minutes and RPO of 5 minutes. Which DR strategy is MOST appropriate?",
+      "options": [
+        "Backup and Restore",
+        "Pilot Light",
+        "Warm Standby",
+        "Multi-Site Active-Active"
+      ],
+      "correctIndex": 2,
+      "explanation": {
+        "hu": "Warm Standby meets 15min RTO"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 2,
+      "question": "Auto Scaling group should scale based on SQS queue depth. Which metric?",
+      "options": [
+        "ApproximateNumberOfMessagesVisible",
+        "NumberOfMessagesSent",
+        "NumberOfMessagesReceived",
+        "ApproximateAgeOfOldestMessage"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "ApproximateNumberOfMessagesVisible = backlog"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 3,
+      "question": "RDS Multi-AZ typical failover time?",
+      "options": [
+        "Seconds",
+        "1-2 minutes",
+        "10-15 minutes",
+        "1 hour"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "RDS Multi-AZ failover ~ 1-2 min"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 4,
+      "question": "Application needs static IP addresses for firewall whitelisting across regions. Which solution?",
+      "options": [
+        "Application Load Balancer",
+        "Network Load Balancer",
+        "AWS Global Accelerator",
+        "CloudFront"
+      ],
+      "correctIndex": 2,
+      "explanation": {
+        "hu": "Global Accelerator = static anycast IPs"
+      },
+      "difficulty": "Medium"
+    },
+    {
+      "id": 5,
+      "question": "When use NLB instead of ALB? (Choose 2)",
+      "options": [
+        "Need static IP addresses",
+        "Need path-based routing",
+        "Need ultra-low latency",
+        "Need host-based routing"
+      ],
+      "correctIndex": [
+        0,
+        2
+      ],
+      "explanation": {
+        "hu": "NLB: static IPs + ultra-low latency"
+      },
+      "difficulty": "Medium"
+    },
+    {
+      "id": 6,
+      "question": "Auto Scaling group scales too aggressively on temporary spikes. How to make less sensitive?",
+      "options": [
+        "Increase cooldown period",
+        "Increase CloudWatch alarm evaluation periods",
+        "Decrease target metric value",
+        "Change to scheduled scaling"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "More evaluation periods = less sensitive"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 7,
+      "question": "S3 bucket needs replication to eu-west-1 with 15-minute SLA. What should be configured?",
+      "options": [
+        "S3 Cross-Region Replication (CRR)",
+        "S3 CRR with Replication Time Control (RTC)",
+        "AWS Backup",
+        "Lambda function"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "S3 RTC = 15-minute replication SLA"
+      },
+      "difficulty": "Medium"
+    },
+    {
+      "id": 8,
+      "question": "DynamoDB table needs point-in-time recovery. How far back can you restore?",
+      "options": [
+        "7 days",
+        "35 days",
+        "90 days",
+        "1 year"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "DynamoDB PITR = 35 days"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 9,
+      "question": "Route 53 routing policy for automatic failover from primary to secondary region?",
+      "options": [
+        "Latency routing",
+        "Geolocation routing",
+        "Failover routing",
+        "Weighted routing"
+      ],
+      "correctIndex": 2,
+      "explanation": {
+        "hu": "Failover routing with health checks"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 10,
+      "question": "Application Load Balancer should distribute traffic evenly across AZs. What should be enabled?",
+      "options": [
+        "Sticky sessions",
+        "Cross-zone load balancing",
+        "Connection draining",
+        "Proxy protocol"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "Cross-zone load balancing = even distribution"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 11,
+      "question": "Auto Scaling target tracking policy should maintain what metric?",
+      "options": [
+        "Minimum capacity",
+        "Maximum capacity",
+        "Desired capacity",
+        "Target metric value (e.g., 50% CPU)"
+      ],
+      "correctIndex": 3,
+      "explanation": {
+        "hu": "Target tracking maintains metric value"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 12,
+      "question": "EC2 Auto Recovery vs Auto Scaling replacement. When use Auto Recovery?",
+      "options": [
+        "Need same instance ID and private IP",
+        "Need to scale horizontally",
+        "Instance store volumes must be preserved",
+        "Need different instance type"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "Auto Recovery keeps same ID, IP"
+      },
+      "difficulty": "Medium"
+    },
+    {
+      "id": 13,
+      "question": "Aurora Global Database provides what replication lag?",
+      "options": [
+        "Seconds",
+        "< 1 second",
+        "Minutes",
+        "Hours"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "Aurora Global = <1 second lag"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 14,
+      "question": "DynamoDB Global Tables with zero RPO requires what?",
+      "options": [
+        "2 regions minimum",
+        "3 regions minimum (MRSC)",
+        "5 regions minimum",
+        "Single region with backups"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "MRSC (zero RPO) = 3+ regions"
+      },
+      "difficulty": "Hard"
+    },
+    {
+      "id": 15,
+      "question": "CloudFront origin failover configuration requires?",
+      "options": [
+        "Primary and secondary origins in origin group",
+        "Multiple distributions",
+        "Lambda@Edge",
+        "Route 53 health checks"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "CloudFront origin groups enable failover"
+      },
+      "difficulty": "Medium"
+    },
+    {
+      "id": 16,
+      "question": "ELB connection draining allows what during instance termination?",
+      "options": [
+        "Complete in-flight requests before deregistering",
+        "Reject new connections immediately",
+        "Restart instance",
+        "Create new instance"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "Connection draining completes in-flight requests"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 17,
+      "question": "RDS Read Replicas can be promoted to standalone database?",
+      "options": [
+        "Yes, manually",
+        "Yes, automatically on primary failure",
+        "No, read-only always",
+        "Only in Multi-AZ"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "Read Replicas = manual promotion"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 18,
+      "question": "AWS Backup supports which services? (Choose 3)",
+      "options": [
+        "Amazon RDS",
+        "Amazon EBS",
+        "Amazon DynamoDB",
+        "Amazon EC2 (AMIs only)",
+        "AWS Lambda code"
+      ],
+      "correctIndex": [
+        0,
+        1,
+        2
+      ],
+      "explanation": {
+        "hu": "AWS Backup: RDS, EBS, DynamoDB, EFS, FSx"
+      },
+      "difficulty": "Medium"
+    },
+    {
+      "id": 19,
+      "question": "Predictive Auto Scaling requires minimum how much historical data?",
+      "options": [
+        "7 days",
+        "14 days",
+        "30 days",
+        "90 days"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "Predictive Scaling = 14 days history min"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 20,
+      "question": "Global Accelerator vs CloudFront. When use Global Accelerator?",
+      "options": [
+        "Need to cache content",
+        "Need static IPs for TCP/UDP applications",
+        "Only serve HTTP/HTTPS",
+        "Need WAF integration"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "Global Accelerator = non-HTTP + static IPs"
+      },
+      "difficulty": "Medium"
+    }
+  ],
+  "flashcards": [
+    {
+      "id": "fc1",
+      "front": "4 DR strategy RTO szerint?",
+      "back": "1. Active-Active <1min\n2. Warm Standby ~10min\n3. Pilot Light 10-60min\n4. Backup & Restore hours"
+    },
+    {
+      "id": "fc2",
+      "front": "Backup & Restore mikor?",
+      "back": "Non-critical apps\nRTO: 24+ hours OK\nCost-effective\n\n'Cost-effective, non-critical' → Backup & Restore"
+    },
+    {
+      "id": "fc3",
+      "front": "Pilot Light mi fut?",
+      "back": "✅ Core systems (minimal)\n✅ DB replication\n❌ App servers OFF\n\nRTO: 10-60min\nCost: $$"
+    },
+    {
+      "id": "fc4",
+      "front": "Warm Standby mi fut?",
+      "back": "✅ Full environment (scaled down)\n✅ All services running\n✅ Can handle traffic now\n\nRTO: Minutes\nCost: $$$"
+    },
+    {
+      "id": "fc5",
+      "front": "Active-Active jellemzői?",
+      "back": "Full production multi-region\nBoth handle live traffic\nZero downtime failover\n\nRTO: <1min\nCost: $$$$"
+    },
+    {
+      "id": "fc6",
+      "front": "RTO vs RPO?",
+      "back": "RTO = Recovery TIME Objective\n  (How fast recover?)\n\nRPO = Recovery POINT Objective\n  (Data loss acceptable?)"
+    },
+    {
+      "id": "fc7",
+      "front": "Multi-AZ vs Multi-Region?",
+      "back": "Multi-AZ:\n- AZ failure protection\n- Low latency\n- Simple\n\nMulti-Region:\n- Region failure\n- Global users\n- Complex"
+    },
+    {
+      "id": "fc8",
+      "front": "Route 53 routing policies?",
+      "back": "Failover → Primary/Secondary DR\nLatency → Lowest latency\nGeolocation → Location-based\nWeighted → Traffic % split"
+    },
+    {
+      "id": "fc9",
+      "front": "ALB vs NLB vs GWLB?",
+      "back": "ALB: Layer 7, HTTP, path routing\nNLB: Layer 4, static IPs, ultra-low latency\nGWLB: Layer 3, security appliances"
+    },
+    {
+      "id": "fc10",
+      "front": "NLB mikor?",
+      "back": "✅ Static IPs\n✅ Millions RPS\n✅ Ultra-low latency\n✅ TCP/UDP\n✅ IP whitelisting\n\nExample: Gaming, IoT"
+    },
+    {
+      "id": "fc11",
+      "front": "ALB mikor?",
+      "back": "✅ HTTP/HTTPS\n✅ Path-based routing\n✅ Microservices\n✅ Lambda targets\n✅ WAF integration"
+    },
+    {
+      "id": "fc12",
+      "front": "Global Accelerator vs CloudFront?",
+      "back": "Global Accelerator:\n- Network optimization\n- Static anycast IPs\n- TCP/UDP\n\nCloudFront:\n- Content cache\n- HTTP/HTTPS\n- Dynamic IPs"
+    },
+    {
+      "id": "fc13",
+      "front": "Auto Scaling types?",
+      "back": "Dynamic (Target Tracking) - Reactive\nPredictive - ML-based, 14 days history\nScheduled - Known time patterns"
+    },
+    {
+      "id": "fc14",
+      "front": "Predictive Scaling mikor?",
+      "back": "✅ Cyclical traffic\n✅ 14 days history min\n✅ Launch BEFORE demand\n\n'Predictable daily spike' → Predictive"
+    },
+    {
+      "id": "fc15",
+      "front": "ASG health check types?",
+      "back": "EC2 Status Checks\nELB Health Checks\nCustom Health Checks\n\nUnhealthy → Terminate + Launch"
+    },
+    {
+      "id": "fc16",
+      "front": "RDS Multi-AZ működése?",
+      "back": "Primary + Standby (sync replication)\nAuto failover 1-2min\nZero data loss\nSame endpoint (DNS)\n\nNOT for read scaling!"
+    },
+    {
+      "id": "fc17",
+      "front": "Aurora Global Database?",
+      "back": "Primary + 10 secondary regions\n<1sec replication lag\n<1min manual promotion\nLow latency global reads"
+    },
+    {
+      "id": "fc18",
+      "front": "DynamoDB Global Tables + MRSC?",
+      "back": "Global Tables:\n- Multi-region writes\n- 99.999% SLA\n\nMRSC:\n- Zero RPO\n- 3+ regions required"
+    },
+    {
+      "id": "fc19",
+      "front": "AWS FIS célja?",
+      "back": "Fault Injection Simulator\nTest resilience\nChaos engineering\n\nSupported: EC2, ECS, RDS, Network\nSafety: Stop conditions, rollback"
+    },
+    {
+      "id": "fc20",
+      "front": "GameDay best practices?",
+      "back": "Before: Test non-prod, document\nDuring: Realistic failures, monitor\nAfter: Review, update runbooks\n\nBenefit: Reduced MTTR up to 90%"
+    },
+    {
+      "id": "fc21",
+      "front": "AWS Backup szolgáltatások?",
+      "back": "EBS, RDS, DynamoDB, EFS, Storage Gateway\n\nCentralized backup plans\nCross-region copy\nLifecycle policies"
+    },
+    {
+      "id": "fc22",
+      "front": "Route 53 health check types?",
+      "back": "Endpoint - HTTP/HTTPS/TCP\nCalculated - AND/OR logic\nCloudWatch Alarm - Metrics"
+    },
+    {
+      "id": "fc23",
+      "front": "Self-healing architecture?",
+      "back": "1. Health Checks (ELB, EC2)\n2. Auto Replacement (ASG)\n3. Circuit Breaker (prevent cascade)\n4. Automated Recovery (SSM)"
+    },
+    {
+      "id": "fc24",
+      "front": "CloudFront origin failover?",
+      "back": "Origin group:\n1. Primary origin\n2. Secondary origin\n3. Failover on 5xx\n\n'Automatic origin failover' → Origin groups"
+    },
+    {
+      "id": "fc25",
+      "front": "Cross-zone load balancing?",
+      "back": "Without: Uneven per instance\nWith: Even across ALL instances\n\nDefault:\nALB: ✅ Enabled (free)\nNLB: ❌ Disabled (charges)"
+    },
+    {
+      "id": "fc26",
+      "front": "EC2 Auto-Recovery?",
+      "back": "Keep same:\n- Instance ID\n- Private IP\n- Elastic IP\n- Metadata\n\nLimitation: Instance store LOST"
+    }
+  ]
+}

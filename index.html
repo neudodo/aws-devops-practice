@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AWS DevOps Pro - ULTIMATE Practice Platform</title>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .flip-card { perspective: 1000px; cursor: pointer; }
+    .flip-card-inner { position: relative; width: 100%; min-height: 400px; transition: transform .6s; transform-style: preserve-3d; }
+    .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+    .flip-card-front, .flip-card-back { position: absolute; width: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+    .flip-card-back { transform: rotateY(180deg); }
+  </style>
+</head>
+<body class="bg-gray-50">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    const DOMAIN_IDS = ['domain1','domain2','domain3','domain4','domain5','domain6'];
+
+    async function fetchJson(url) {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(url + ' ' + res.status);
+      return res.json();
+    }
+
+    function App() {
+      const [domainsData, setDomainsData] = useState({});
+      const [loading, setLoading] = useState(true);
+      const [errors, setErrors] = useState([]);
+      const [currentDomain, setCurrentDomain] = useState('domain1');
+      const [currentView, setCurrentView] = useState('home');
+      const [testState, setTestState] = useState(null);
+      const [scores, setScores] = useState({});
+      const [masteredCards, setMasteredCards] = useState({});
+
+      useEffect(() => {
+        const s = localStorage.getItem('dopc-scores');
+        const m = localStorage.getItem('dopc-mastered');
+        if (s) setScores(JSON.parse(s));
+        if (m) setMasteredCards(JSON.parse(m));
+      }, []);
+      useEffect(() => { localStorage.setItem('dopc-scores', JSON.stringify(scores)); }, [scores]);
+      useEffect(() => { localStorage.setItem('dopc-mastered', JSON.stringify(masteredCards)); }, [masteredCards]);
+
+      useEffect(() => {
+        (async () => {
+          setLoading(true);
+          const loaded = {};
+          const errs = [];
+          for (const id of DOMAIN_IDS) {
+            try {
+              const data = await fetchJson(`assets/${id}.json`);
+              loaded[id] = {
+                id,
+                name: data.name || id,
+                icon: data.icon || '📚',
+                percentage: data.percentage ?? 0,
+                color: data.color || 'blue',
+                questions: Array.isArray(data.questions) ? data.questions : [],
+                flashcards: Array.isArray(data.flashcards) ? data.flashcards : []
+              };
+            } catch (e) {
+              errs.push(String(e));
+            }
+          }
+          setErrors(errs);
+          setDomainsData(loaded);
+          setLoading(false);
+          if (!loaded[currentDomain] && Object.keys(loaded).length) {
+            setCurrentDomain(Object.keys(loaded)[0]);
+          }
+        })();
+      }, []);
+
+      if (loading) {
+        return (
+          <div className="h-screen flex items-center justify-center">
+            <div className="bg-white p-8 rounded-xl shadow-lg border animate-pulse">
+              <div className="text-2xl font-semibold text-gray-800 mb-2">Betöltés folyamatban…</div>
+              <div className="text-gray-500">assets/domainX.json fájlok olvasása</div>
+            </div>
+          </div>
+        );
+      }
+
+      const domainKeys = Object.keys(domainsData);
+      if (domainKeys.length === 0) {
+        return (
+          <div className="max-w-3xl mx-auto mt-16 bg-white p-8 rounded-xl shadow-lg border space-y-4">
+            <h1 className="text-2xl font-bold">Nincs betölthető domain</h1>
+            <p className="text-gray-700">Helyezd el az <code>assets/</code> mappában a következő fájlokat:</p>
+            <pre className="bg-gray-50 p-3 rounded border text-sm">assets/domain1.json … assets/domain6.json</pre>
+            {errors.length > 0 && (
+              <details className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
+                <summary className="font-semibold cursor-pointer">Hibák megjelenítése</summary>
+                <ul className="list-disc list-inside text-sm text-yellow-900 mt-2">
+                  {errors.map((e,i)=>(<li key={i}>{e}</li>))}
+                </ul>
+              </details>
+            )}
+          </div>
+        );
+      }
+
+      const colorClasses = {
+        blue: 'bg-blue-100 text-blue-700 border-blue-300',
+        purple: 'bg-purple-100 text-purple-700 border-purple-300',
+        green: 'bg-green-100 text-green-700 border-green-300',
+        orange: 'bg-orange-100 text-orange-700 border-orange-300',
+        red: 'bg-red-100 text-red-700 border-red-300',
+        indigo: 'bg-indigo-100 text-indigo-700 border-indigo-300'
+      };
+
+      const current = domainsData[currentDomain];
+
+      const startTest = (domainId) => {
+        const domain = domainsData[domainId];
+        setTestState({
+          domainId,
+          questions: domain.questions,
+          currentQuestion: 0,
+          answers: [],
+          showExplanation: false,
+          completed: false
+        });
+        setCurrentView('test');
+      };
+
+      const submitAnswer = (answerIndex) => {
+        setTestState(prev => ({
+          ...prev,
+          answers: [...prev.answers, answerIndex],
+          showExplanation: true
+        }));
+      };
+
+      const nextQuestion = () => {
+        const nextIndex = testState.currentQuestion + 1;
+        if (nextIndex < testState.questions.length) {
+          setTestState(prev => ({ ...prev, currentQuestion: nextIndex, showExplanation: false }));
+        } else {
+          const correct = testState.answers.filter((ans, idx) => ans === testState.questions[idx].correctIndex).length;
+          const total = testState.questions.length;
+          const percentage = Math.round((correct / total) * 100);
+          setScores(prev => ({ ...prev, [testState.domainId]: { correct, total, percentage } }));
+          setTestState(prev => ({ ...prev, completed: true }));
+        }
+      };
+
+      const toggleMastered = (domainId, cardId) => {
+        setMasteredCards(prev => {
+          const arr = prev[domainId] || [];
+          const isMastered = arr.includes(cardId);
+          return { ...prev, [domainId]: isMastered ? arr.filter(id => id !== cardId) : [...arr, cardId] };
+        });
+      };
+
+      return (
+        <div className="min-h-screen">
+          <header className="bg-white shadow-sm border-b">
+            <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+              <h1 className="text-2xl font-bold text-gray-900">📚 AWS DevOps Pro - ULTIMATE Practice Platform</h1>
+              <div className="flex gap-2">
+                <button onClick={() => setCurrentView('home')} className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg">🏠 Home</button>
+                <button onClick={() => setCurrentView('dashboard')} className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg">📊 Dashboard</button>
+              </div>
+            </div>
+          </header>
+
+          <div className="bg-white border-b">
+            <div className="max-w-7xl mx-auto px-4">
+              <div className="flex gap-2 overflow-x-auto py-2">
+                {Object.values(domainsData).map(domain => (
+                  <button
+                    key={domain.id}
+                    onClick={() => { setCurrentDomain(domain.id); setCurrentView('home'); }}
+                    className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-colors ${
+                      currentDomain === domain.id
+                        ? `${colorClasses[domain.color] || colorClasses.blue} border-2`
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    }`}
+                  >
+                    {domain.icon} D{domain.id.replace('domain','')}: {domain.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <main className="max-w-7xl mx-auto px-4 py-8">
+            {currentView === 'home' && (
+              <DomainHome
+                domain={current}
+                score={scores[currentDomain]}
+                masteredCount={(masteredCards[currentDomain] || []).length}
+                onStartTest={() => startTest(currentDomain)}
+                onStartFlashcards={() => setCurrentView('flashcards')}
+              />
+            )}
+
+            {currentView === 'test' && testState && (
+              <PracticeTest
+                testState={testState}
+                domain={current}
+                onSubmitAnswer={submitAnswer}
+                onNextQuestion={nextQuestion}
+                onRetake={() => startTest(testState.domainId)}
+                onBackHome={() => setCurrentView('home')}
+              />
+            )}
+
+            {currentView === 'flashcards' && (
+              <FlashcardsView
+                domain={current}
+                masteredCards={masteredCards[currentDomain] || []}
+                onToggleMastered={(cardId) => toggleMastered(currentDomain, cardId)}
+                onBack={() => setCurrentView('home')}
+              />
+            )}
+
+            {currentView === 'dashboard' && (
+              <Dashboard domains={domainsData} scores={scores} masteredCards={masteredCards} />
+            )}
+          </main>
+
+          <footer className="bg-white border-t mt-12">
+            <div className="max-w-7xl mx-auto px-4 py-6 text-center text-sm text-gray-600">
+              <p>🎯 <strong>Practice Tests + Flashcards</strong> | Minden adat JSON-ból töltve</p>
+              <p className="mt-2">Target: <strong>80%+ pass rate</strong> | Eredmények: localStorage</p>
+              {errors.length > 0 && (
+                <details className="mt-3 bg-yellow-50 border-l-4 border-yellow-500 p-3 rounded">
+                  <summary className="font-semibold cursor-pointer">Hiba részletek</summary>
+                  <ul className="list-disc list-inside text-sm text-yellow-900 mt-2">
+                    {errors.map((e,i)=>(<li key={i}>{e}</li>))}
+                  </ul>
+                </details>
+              )}
+            </div>
+          </footer>
+        </div>
+      );
+    }
+
+    function DomainHome({ domain, score, masteredCount, onStartTest, onStartFlashcards }) {
+      return (
+        <div className="space-y-6">
+          <div className="text-center">
+            <h2 className="text-4xl font-bold text-gray-900 mb-2">
+              {domain.icon} Domain {domain.id.replace('domain', '')}: {domain.name}
+            </h2>
+            <p className="text-xl text-gray-600">{domain.percentage}% of exam</p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="bg-white rounded-xl shadow-lg p-6 border-2 border-gray-200 hover:border-blue-300 transition-all">
+              <div className="text-center space-y-4">
+                <div className="text-5xl">📝</div>
+                <h3 className="text-2xl font-bold">Practice Test</h3>
+                <p className="text-gray-600">{domain.questions.length} Questions</p>
+                {score && (
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <div className="text-sm text-gray-600 mb-1">Last Score</div>
+                    <div className="text-3xl font-bold text-blue-600">{score.correct}/{score.total}</div>
+                    <div className="text-lg text-gray-700">{score.percentage}% {score.percentage >= 80 ? '✅' : '⚠️'}</div>
+                  </div>
+                )}
+                <button onClick={onStartTest} className="w-full py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700">
+                  {score ? 'Retake Test' : 'Start Test'}
+                </button>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-xl shadow-lg p-6 border-2 border-gray-200 hover:border-purple-300 transition-all">
+              <div className="text-center space-y-4">
+                <div className="text-5xl">🎴</div>
+                <h3 className="text-2xl font-bold">Flashcards</h3>
+                <p className="text-gray-600">{domain.flashcards.length} Cards</p>
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <div className="text-sm text-gray-600 mb-1">Mastered</div>
+                  <div className="text-3xl font-bold text-purple-600">{masteredCount}/{domain.flashcards.length}</div>
+                  <div className="text-lg text-gray-700">{Math.round((masteredCount / Math.max(1,domain.flashcards.length)) * 100)}%</div>
+                </div>
+                <button onClick={onStartFlashcards} className="w-full py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700">
+                  Study Cards
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function PracticeTest({ testState, domain, onSubmitAnswer, onNextQuestion, onRetake, onBackHome }) {
+      if (testState.completed) {
+        const score = testState.answers.filter((ans, idx) => ans === testState.questions[idx].correctIndex).length;
+        const total = testState.questions.length;
+        const percentage = Math.round((score / total) * 100);
+        const grade = percentage >= 92 ? 'A+' : percentage >= 80 ? 'A' : percentage >= 68 ? 'B' : 'C';
+        return (
+          <div className="max-w-2xl mx-auto">
+            <div className="bg-white rounded-xl shadow-lg p-8 text-center space-y-6">
+              <h2 className="text-3xl font-bold">{domain.name} Results</h2>
+              <div className="py-6">
+                <div className="text-6xl font-bold text-blue-600 mb-2">{score}/{total}</div>
+                <div className="text-3xl text-gray-700 mb-4">{percentage}%</div>
+                <div className="text-2xl font-semibold">Grade: {grade}</div>
+              </div>
+              <div className="flex gap-4">
+                <button onClick={onRetake} className="flex-1 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700">Retake Test</button>
+                <button onClick={onBackHome} className="flex-1 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300">Back Home</button>
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+      const q = testState.questions[testState.currentQuestion];
+      const selected = testState.answers[testState.currentQuestion];
+      const progress = ((testState.currentQuestion + 1) / Math.max(1,testState.questions.length)) * 100;
+
+      return (
+        <div className="max-w-3xl mx-auto">
+          <div className="mb-6">
+            <div className="flex justify-between text-sm text-gray-600 mb-2">
+              <span>Question {testState.currentQuestion + 1} of {testState.questions.length}</span>
+              <span>Progress: {Math.round(progress)}%</span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-2">
+              <div className="bg-blue-600 h-2 rounded-full transition-all" style={{ width: progress + '%' }} />
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl shadow-lg p-8 space-y-6">
+            <h3 className="text-xl font-semibold">{q.question}</h3>
+
+            <div className="space-y-3">
+              {q.options.map((opt, idx) => {
+                const isSelected = selected === idx;
+                const isCorrect = idx === q.correctIndex;
+                const showResult = testState.showExplanation;
+
+                let bg = 'bg-gray-50 hover:bg-gray-100 border-gray-200';
+                if (showResult) {
+                  if (isCorrect) bg = 'bg-green-100 border-green-400';
+                  else if (isSelected) bg = 'bg-red-100 border-red-400';
+                }
+
+                return (
+                  <button key={idx} onClick={() => !showResult && onSubmitAnswer(idx)} disabled={showResult}
+                    className={`w-full text-left p-4 rounded-lg border-2 transition-all ${bg}`}>
+                    <span className="font-medium">{String.fromCharCode(65 + idx)}) </span>
+                    {opt}
+                    {showResult && isCorrect && <span className="ml-2">✓</span>}
+                    {showResult && isSelected && !isCorrect && <span className="ml-2">✗</span>}
+                  </button>
+                );
+              })}
+            </div>
+
+            {testState.showExplanation && (
+              <div className="mt-6 space-y-4">
+                {q.explanation?.hu && (
+                  <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
+                    <h4 className="font-bold text-blue-900 mb-2">📖 Magyarázat:</h4>
+                    <p className="text-gray-800">{q.explanation.hu}</p>
+                  </div>
+                )}
+                {q.explanation?.whyCorrect && (
+                  <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded">
+                    <h4 className="font-bold text-green-900 mb-2">✅ Miért helyes:</h4>
+                    <p className="text-gray-800">{q.explanation.whyCorrect}</p>
+                  </div>
+                )}
+                {Array.isArray(q.explanation?.whyWrong) && q.explanation.whyWrong.some(w => w) && (
+                  <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded">
+                    <h4 className="font-bold text-red-900 mb-2">❌ Miért nem a többi:</h4>
+                    <ul className="list-disc list-inside space-y-1 text-gray-800">
+                      {q.explanation.whyWrong.map((reason, idx) => reason && (
+                        <li key={idx}><strong>{String.fromCharCode(65 + idx)}:</strong> {reason}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {q.examTip && (
+                  <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded">
+                    <h4 className="font-bold text-yellow-900 mb-2">💡 Vizsga tipp:</h4>
+                    <p className="text-gray-800">{q.examTip}</p>
+                  </div>
+                )}
+                <button onClick={onNextQuestion} className="w-full py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700">
+                  {testState.currentQuestion < testState.questions.length - 1 ? 'Next Question →' : 'View Results'}
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    function FlashcardsView({ domain, masteredCards, onToggleMastered, onBack }) {
+      const [currentCard, setCurrentCard] = useState(0);
+      const [isFlipped, setIsFlipped] = useState(false);
+      const [filter, setFilter] = useState('all');
+      const cards = (domain.flashcards || []).filter(c => filter === 'all' || !masteredCards.includes(c.id));
+
+      if (cards.length === 0) {
+        return (
+          <div className="max-w-2xl mx-auto text-center">
+            <div className="bg-white rounded-xl shadow-lg p-8">
+              <h3 className="text-2xl font-bold mb-4">🎉 All cards mastered!</h3>
+              <button onClick={() => setFilter('all')} className="px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700">
+                Show All Cards
+              </button>
+            </div>
+          </div>
+        );
+      }
+
+      const card = cards[currentCard];
+      const isMastered = masteredCards.includes(card.id);
+
+      return (
+        <div className="max-w-2xl mx-auto space-y-6">
+          <div className="flex justify-between items-center">
+            <button onClick={onBack} className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">← Back</button>
+            <div className="text-center">
+              <div className="text-sm text-gray-600">Card {currentCard + 1} of {cards.length}</div>
+              <div className="text-lg font-semibold">Mastered: {masteredCards.length}/{domain.flashcards.length}</div>
+            </div>
+            <select value={filter} onChange={(e) => { setFilter(e.target.value); setCurrentCard(0); setIsFlipped(false); }} className="px-4 py-2 border rounded-lg">
+              <option value="all">All Cards</option>
+              <option value="notMastered">Not Mastered</option>
+            </select>
+          </div>
+
+          <div className={`flip-card ${isFlipped ? 'flipped' : ''}`} onClick={() => setIsFlipped(!isFlipped)}>
+            <div className="flip-card-inner">
+              <div className="flip-card-front">
+                <div className="bg-white rounded-xl shadow-2xl p-12 min-h-[400px] flex flex-col justify-center items-center border-4 border-purple-200">
+                  <div className="text-sm font-semibold text-purple-600 mb-4">KÉRDÉS</div>
+                  <div className="text-2xl text-center text-gray-900 font-medium">{card.front}</div>
+                  <div className="mt-8 text-sm text-gray-500">Kattints a megfordításhoz</div>
+                </div>
+              </div>
+              <div className="flip-card-back">
+                <div className="bg-purple-50 rounded-xl shadow-2xl p-12 min-h-[400px] flex flex-col justify-center border-4 border-purple-400">
+                  <div className="text-sm font-semibold text-purple-600 mb-4">VÁLASZ</div>
+                  <div className="text-lg text-gray-900 whitespace-pre-line">{card.back}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex gap-4">
+            <button onClick={(e) => { e.stopPropagation(); setCurrentCard(Math.max(0, currentCard - 1)); setIsFlipped(false); }} disabled={currentCard === 0}
+              className="flex-1 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 disabled:opacity-50">← Previous</button>
+            <button onClick={(e) => { e.stopPropagation(); onToggleMastered(card.id); }}
+              className={`flex-1 py-3 rounded-lg font-semibold transition-colors ${isMastered ? 'bg-green-100 text-green-700 border-2 border-green-400' : 'bg-white text-gray-700 border-2 border-gray-300 hover:border-green-400'}`}>
+              {isMastered ? '✓ Mastered' : '✓ Mark as Mastered'}
+            </button>
+            <button onClick={(e) => { e.stopPropagation(); setCurrentCard(Math.min(cards.length - 1, currentCard + 1)); setIsFlipped(false); }} disabled={currentCard === cards.length - 1}
+              className="flex-1 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 disabled:opacity-50">Next →</button>
+          </div>
+        </div>
+      );
+    }
+
+    function Dashboard({ domains, scores, masteredCards }) {
+      const domainList = Object.values(domains);
+      const totalDomains = domainList.length;
+      const completedTests = Object.keys(scores).length;
+      const totalMastered = Object.values(masteredCards).reduce((sum, cards) => sum + cards.length, 0);
+      const totalCards = domainList.reduce((sum, d) => sum + (d.flashcards?.length || 0), 0);
+      const overallProgress = Math.round(((completedTests / Math.max(1,totalDomains)) + (totalMastered / Math.max(1,totalCards))) / 2 * 100);
+
+      return (
+        <div className="space-y-8">
+          <h2 className="text-3xl font-bold">📊 Progress Dashboard</h2>
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="bg-white rounded-xl shadow-lg p-6">
+              <div className="text-5xl font-bold text-blue-600 mb-2">{isFinite(overallProgress) ? overallProgress : 0}%</div>
+              <div className="text-gray-600">Overall Progress</div>
+            </div>
+            <div className="bg-white rounded-xl shadow-lg p-6">
+              <div className="text-5xl font-bold text-green-600 mb-2">{completedTests}/{totalDomains}</div>
+              <div className="text-gray-600">Tests Completed</div>
+            </div>
+            <div className="bg-white rounded-xl shadow-lg p-6">
+              <div className="text-5xl font-bold text-purple-600 mb-2">{totalMastered}/{Math.max(1,totalCards)}</div>
+              <div className="text-gray-600">Cards Mastered</div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl shadow-lg p-6">
+            <h3 className="text-xl font-bold mb-4">Domain Breakdown</h3>
+            <div className="space-y-4">
+              {domainList.map(domain => {
+                const score = scores[domain.id];
+                const mastered = (masteredCards[domain.id] || []).length;
+                return (
+                  <div key={domain.id} className="border-b border-gray-200 pb-4 last:border-0">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-2xl">{domain.icon}</span>
+                      <span className="font-semibold">Domain {domain.id.replace('domain','')}: {domain.name}</span>
+                    </div>
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="bg-gray-50 rounded-lg p-3">
+                        <div className="text-sm text-gray-600 mb-1">Practice Test</div>
+                        {score ? (
+                          <div className="text-2xl font-bold text-blue-600">
+                            {score.correct}/{score.total} ({score.percentage}%){' '}
+                            {score.percentage >= 80 ? '✅' : '⚠️'}
+                          </div>
+                        ) : (
+                          <div className="text-gray-500">Not taken</div>
+                        )}
+                      </div>
+                      <div className="bg-gray-50 rounded-lg p-3">
+                        <div className="text-sm text-gray-600 mb-1">Flashcards</div>
+                        <div className="text-2xl font-bold text-purple-600">
+                          {mastered}/{domain.flashcards.length} ({Math.round((mastered / Math.max(1,domain.flashcards.length)) * 100)}%)
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>

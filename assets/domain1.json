@@ -1,0 +1,649 @@
+{
+  "id": "domain1",
+  "name": "SDLC Automation",
+  "icon": "🚀",
+  "percentage": 22,
+  "color": "blue",
+  "questions": [
+    {
+      "id": 1,
+      "question": "A company needs to implement a CI/CD pipeline that deploys to production only after manual approval. The pipeline should automatically build and test in the development environment. Which AWS services combination best meets this requirement?",
+      "options": [
+        "CodeCommit, CodeBuild, CodeDeploy with Lambda approval function",
+        "CodePipeline with CodeBuild, manual approval action, and CodeDeploy",
+        "Jenkins with AWS Lambda for approval and CodeDeploy",
+        "CodePipeline with EventBridge approval and CloudFormation"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "CodePipeline natív támogatja a manual approval action-t. CodeBuild build-el és testel, Manual Approval action pauseolja a pipeline-t approval-ra várva, CodeDeploy deploy-ol production-be. Ez a legegyszerűbb AWS-native megoldás.",
+        "whyCorrect": "Native AWS feature, egyszerű konfiguráció, built-in manual approval, minimális operational overhead",
+        "whyWrong": [
+          "Lambda approval function feleslegesen komplex custom megoldás",
+          null,
+          "Jenkins nem natív AWS megoldás, több maintenance overhead",
+          "EventBridge nem támogat manual approval-t directly"
+        ]
+      },
+      "examTip": "'Manual approval' kulcsszó → CodePipeline Manual Approval Action",
+      "difficulty": "Easy"
+    },
+    {
+      "id": 2,
+      "question": "A DevOps team needs to store application artifacts in a centralized repository that supports npm, Maven, and PyPI packages. The repository should cache external packages to improve build performance. Which solution should they implement?",
+      "options": [
+        "Amazon S3 with versioning enabled",
+        "AWS CodeArtifact with upstream repositories",
+        "Elastic Container Registry (ECR)",
+        "Amazon EFS with NFS shares"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "CodeArtifact specifikusan package artifact repository, támogatja npm, Maven, PyPI, NuGet-et. Upstream repositories funkció automatikusan cache-eli az external packages-eket, jelentősen gyorsítva a build-eket.",
+        "whyCorrect": "Package-specific service, multi-format support, upstream caching built-in",
+        "whyWrong": [
+          "S3 általános storage, nincs package-specific features vagy upstream support",
+          null,
+          "ECR csak container images-re, nem software packages-re",
+          "EFS file storage, nem artifact repository funkcionalitással"
+        ]
+      },
+      "examTip": "'Multiple package types + cache external' → CodeArtifact",
+      "difficulty": "Easy"
+    },
+    {
+      "id": 3,
+      "question": "A CodeBuild project takes 15 minutes to complete due to dependency downloads. Which caching strategy would provide the MOST significant performance improvement?",
+      "options": [
+        "Enable S3 caching for node_modules directory",
+        "Use local caching for source code",
+        "Enable CloudFront caching",
+        "Use EC2 instances instead of CodeBuild"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "Dependencies (node_modules, Maven .m2) ritkán változnak és gyakran nagy méretűek. S3 cache megőrzi ezeket builds között, így a dependency download fázis gyakorlatilag kihagyható. Ez jellemzően 50-70% időmegtakarítást jelent.",
+        "whyCorrect": "Dependencies largest/slowest part, S3 cache persists between builds",
+        "whyWrong": [
+          null,
+          "Source code gyakran változik, kevesebb benefit a cache-elésből",
+          "CloudFront CDN service, nem releváns CodeBuild-re",
+          "EC2 nem oldja meg a dependency download problémát, plusz operational overhead"
+        ]
+      },
+      "examTip": "'Dependency download slow' → S3 caching",
+      "difficulty": "Medium"
+    },
+    {
+      "id": 4,
+      "question": "A deployment to production failed halfway through. The CodeDeploy deployment configuration is OneAtATime. What will happen to the instances that already received the new version?",
+      "options": [
+        "They will automatically roll back to the previous version",
+        "They will keep the new version; remaining instances won't receive deployment",
+        "All instances will roll back simultaneously",
+        "The deployment will retry automatically after 5 minutes"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "OneAtATime: 1 instance egyszerre. Ha fail → STOP, nem automatic rollback. Már deployed instances megtartják az új verziót. Rollback manual vagy CloudWatch Alarm trigger-rel.",
+        "whyCorrect": "Default CodeDeploy behavior on failure with OneAtATime",
+        "whyWrong": [
+          "Nincs automatic rollback OneAtATime-nál",
+          null,
+          "Nem történik automatic simultaneous rollback",
+          "Nincs automatic retry"
+        ]
+      },
+      "examTip": "CodeDeploy default = STOP on failure, NO automatic rollback",
+      "difficulty": "Medium"
+    },
+    {
+      "id": 5,
+      "question": "An application needs to deploy to production with zero downtime and immediate rollback capability. Which deployment configuration should be used?",
+      "options": [
+        "AllAtOnce",
+        "HalfAtATime",
+        "Blue/Green",
+        "Linear10PercentEvery10Minutes"
+      ],
+      "correctIndex": 2,
+      "explanation": {
+        "hu": "Blue/Green deployment két teljes környezetet tart fenn. Blue (current) fut production-ben, Green (new) párhuzamosan deploy-olva és tesztelve. Traffic instant switch (ELB/Route53) Green-re. Blue megmarad instant rollback-hez.",
+        "whyCorrect": "Zero downtime (instant switch), immediate rollback (switch back to Blue), tested before cutover",
+        "whyWrong": [
+          "AllAtOnce = downtime van deployment alatt",
+          "HalfAtATime = nem instant rollback, részleges deployment közben lehet issue",
+          null,
+          "Linear = lassú progressive rollout, nem instant rollback"
+        ]
+      },
+      "examTip": "'Zero downtime + immediate rollback' → Blue/Green",
+      "difficulty": "Easy"
+    },
+    {
+      "id": 6,
+      "question": "A company wants to gradually roll out a new feature to 10% of users, monitor for 15 minutes, then automatically deploy to remaining 90% if no issues occur. Which approach should they use?",
+      "options": [
+        "CodeDeploy with Canary10Percent15Minutes deployment configuration",
+        "CodeDeploy with Linear10PercentEvery15Minutes configuration",
+        "API Gateway with Lambda weighted routing",
+        "ALB with weighted target groups"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "Canary deployment = Test group → Full rollout. Canary10Percent15Minutes: 10% traffic → wait 15 min → If OK → 90% remaining.",
+        "whyCorrect": "Automated canary deployment with built-in monitoring and automatic rollout",
+        "whyWrong": [
+          null,
+          "Linear = gradual increments (10%, 20%, 30%...), nem 10% → 90%",
+          "Manual traffic routing, nem automated deployment",
+          "Manual traffic routing, nem automated deployment"
+        ]
+      },
+      "examTip": "'10% test then 90%' → Canary deployment",
+      "difficulty": "Medium"
+    },
+    {
+      "id": 7,
+      "question": "A CodePipeline needs to deploy to multiple AWS accounts. What is the MOST secure way to provide cross-account access?",
+      "options": [
+        "Share IAM user credentials across accounts",
+        "Use IAM roles with AssumeRole capability and KMS key policies",
+        "Store credentials in Parameter Store and share the parameter",
+        "Use Lambda with hardcoded credentials"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "Cross-account deployment szükséges: 1) IAM Role target account-ban AssumeRole trust policy-vel, 2) S3 bucket policy target account access, 3) KMS key policy cross-account decrypt, 4) Temporary credentials via AssumeRole.",
+        "whyCorrect": "Temporary credentials, no shared secrets, least privilege with KMS encryption",
+        "whyWrong": [
+          "Shared credentials = security risk, nem recommended",
+          null,
+          "Parameter Store sharing nem elég, KMS key kell",
+          "Hardcoded credentials = worst practice"
+        ]
+      },
+      "examTip": "'Cross-account' → AssumeRole + KMS key policy",
+      "difficulty": "Medium"
+    },
+    {
+      "id": 8,
+      "question": "Database credentials need to be rotated automatically every 30 days and used in a CodeBuild project. Which solution meets this requirement with the LEAST operational overhead?",
+      "options": [
+        "Store in Parameter Store SecureString with manual rotation",
+        "AWS Secrets Manager with automatic rotation enabled",
+        "Lambda function to rotate and store in S3",
+        "Hardcode in buildspec.yml with encryption"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "Secrets Manager = automatic rotation native support RDS/Redshift/DocumentDB-hez. CodeBuild reference: env.secrets-manager section.",
+        "whyCorrect": "Automatic rotation built-in, least operational overhead, secure",
+        "whyWrong": [
+          "Parameter Store = NO automatic rotation",
+          null,
+          "Manual/complex solution, nem recommended",
+          "Hardcode = insecure, nem best practice"
+        ]
+      },
+      "examTip": "'Automatic rotation' → Secrets Manager",
+      "difficulty": "Easy"
+    },
+    {
+      "id": 9,
+      "question": "A buildspec.yml file needs to access a Docker Hub password securely during the build process. Which environment variable configuration should be used?",
+      "options": [
+        "variables: DOCKER_PASS: mypassword",
+        "secrets-manager: DOCKER_PASS: dockerhub/password",
+        "parameter-store: DOCKER_PASS: /dockerhub/password",
+        "Both B and C are correct"
+      ],
+      "correctIndex": 3,
+      "explanation": {
+        "hu": "Mindkét megoldás működik és biztonságos: secrets-manager vagy parameter-store section a buildspec.yml-ben.",
+        "whyCorrect": "Both Secrets Manager and Parameter Store are secure methods for storing credentials",
+        "whyWrong": [
+          "Plaintext password = insecure",
+          null,
+          null,
+          null
+        ]
+      },
+      "examTip": "Secure credentials → Secrets Manager vagy Parameter Store",
+      "difficulty": "Easy"
+    },
+    {
+      "id": 10,
+      "question": "A CodePipeline stage occasionally fails due to transient network issues. How can the pipeline be configured to automatically retry the stage?",
+      "options": [
+        "Add a retry configuration in the stage action with retry count",
+        "Use Lambda to monitor and restart the pipeline",
+        "Enable automatic retry in CodePipeline settings",
+        "CodePipeline automatically retries failed stages; no configuration needed"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "CodePipeline action retry configuration: retryMode AUTOMATIC + numberOfRetries a stage action-ben.",
+        "whyCorrect": "Native retry capability in CodePipeline actions",
+        "whyWrong": [
+          null,
+          "Feleslegesen komplex Lambda megoldás",
+          "Nincs global automatic retry setting",
+          "CodePipeline NEM retryol automatically by default"
+        ]
+      },
+      "examTip": "Retry = explicit configuration szükséges",
+      "difficulty": "Hard"
+    },
+    {
+      "id": 11,
+      "question": "A company needs to cache Docker layers between builds to reduce build time. Which CodeBuild cache configuration should be used?",
+      "options": [
+        "S3 cache mode with path /var/lib/docker",
+        "Local cache mode with DOCKER_LAYER caching",
+        "Both S3 and local caching together",
+        "CloudFront cache with CodeBuild"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "Docker layer caching: LOCAL cache type DOCKER_LAYER mode-dal. Megőrzi Docker layers-t builds között.",
+        "whyCorrect": "Specifically designed for Docker layer caching",
+        "whyWrong": [
+          "S3 nem támogatja Docker layer cache-t efficiently",
+          null,
+          "Nem kombináld LOCAL-t S3-mal Docker layers-re",
+          "CloudFront nem releváns"
+        ]
+      },
+      "examTip": "Docker layers → LOCAL DOCKER_LAYER cache",
+      "difficulty": "Medium"
+    },
+    {
+      "id": 12,
+      "question": "An application deployment requires approval from both the security team and operations team before production deployment. How should this be implemented in CodePipeline?",
+      "options": [
+        "Two sequential manual approval actions",
+        "One manual approval action with two SNS topics",
+        "Lambda function to verify approvals",
+        "EventBridge rule with multiple targets"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "Két külön manual approval action = két külön approval szükséges egymás után. Build → Test → Approval (Security) → Approval (Operations) → Deploy.",
+        "whyCorrect": "Two separate approvals ensure both teams must approve",
+        "whyWrong": [
+          null,
+          "Egy approval = csak egy approval kell (bármelyik team)",
+          "Feleslegesen komplex",
+          "EventBridge nem approval mechanism"
+        ]
+      },
+      "examTip": "Multiple approvals → Multiple approval actions",
+      "difficulty": "Medium"
+    },
+    {
+      "id": 13,
+      "question": "Which CodeDeploy lifecycle event hook should be used to validate that the application is running correctly after deployment?",
+      "options": [
+        "ApplicationStart",
+        "ValidateService",
+        "AfterInstall",
+        "BeforeInstall"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "ValidateService = Application running check. Ez az utolsó hook, ahol health check-et futtathatsz. Ha fail → rollback trigger.",
+        "whyCorrect": "Designed specifically for post-deployment validation",
+        "whyWrong": [
+          "ApplicationStart csak elindítja, nem validálja",
+          null,
+          "AfterInstall túl korai a teljes validációhoz",
+          "BeforeInstall a deployment előtt van"
+        ]
+      },
+      "examTip": "Validation hook → ValidateService",
+      "difficulty": "Easy"
+    },
+    {
+      "id": 14,
+      "question": "A CodeBuild project needs to build multiple Docker images in parallel to save time. How should this be configured in buildspec.yml?",
+      "options": [
+        "Use separate build phases for each image",
+        "Use batch build configuration with multiple buildspecs",
+        "Create multiple CodeBuild projects",
+        "Use concurrent Docker build commands in single build phase"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "Batch build configuration lehetővé teszi parallel builds különböző buildspec-ekkel vagy environment változókkal.",
+        "whyCorrect": "Native parallel build capability in CodeBuild",
+        "whyWrong": [
+          "Separate phases = sequential, nem parallel",
+          null,
+          "Multiple projects = feleslegesen komplex",
+          "Single phase = sequential execution"
+        ]
+      },
+      "examTip": "Parallel builds → Batch build configuration",
+      "difficulty": "Hard"
+    },
+    {
+      "id": 15,
+      "question": "A deployment needs to update 20% of instances every 5 minutes. Which CodeDeploy configuration should be used?",
+      "options": [
+        "Linear20PercentEvery5Minutes",
+        "Canary20Percent5Minutes",
+        "AllAtOnce with 5-minute wait",
+        "HalfAtATime with time-based triggers"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "Linear deployment = gradual increments. Linear20PercentEvery5Minutes: 20% → 40% → 60% → 80% → 100% (5 perc lépésenként).",
+        "whyCorrect": "Exact match for requirement: 20% every 5 minutes",
+        "whyWrong": [
+          null,
+          "Canary = 20% → 80%, nem gradual",
+          "AllAtOnce = nincs gradual rollout",
+          "HalfAtATime = 50%, nem 20%"
+        ]
+      },
+      "examTip": "Gradual percentage → Linear deployment",
+      "difficulty": "Easy"
+    },
+    {
+      "id": 16,
+      "question": "CodeArtifact repository needs to fetch packages from npm public registry. What is the maximum number of external connections allowed per repository?",
+      "options": [
+        "Unlimited",
+        "1",
+        "5",
+        "10"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "Maximum 1 external connection per repository. Ha multiple external sources kellenek, chain repositories-t használj.",
+        "whyCorrect": "AWS CodeArtifact service limit",
+        "whyWrong": [
+          "Nem unlimited",
+          null,
+          "Nem 5",
+          "Nem 10"
+        ]
+      },
+      "examTip": "External connection limit = 1",
+      "difficulty": "Hard"
+    },
+    {
+      "id": 17,
+      "question": "A company uses AWS CodeArtifact for internal packages. Team A needs to share packages with Team B in a different AWS account. How should this be configured?",
+      "options": [
+        "Create IAM users in Team B's account",
+        "Configure resource policy on CodeArtifact domain to allow Team B's account",
+        "Publish packages to npm public registry",
+        "Use S3 bucket with cross-account access"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "Domain resource policy cross-account sharing-hez. Domain-level policy lehetővé teszi más account hozzáférését.",
+        "whyCorrect": "Native CodeArtifact cross-account sharing mechanism",
+        "whyWrong": [
+          "IAM users nem szükségesek, resource policy elég",
+          null,
+          "Public registry = nem private sharing",
+          "S3 nem CodeArtifact replacement"
+        ]
+      },
+      "examTip": "Cross-account CodeArtifact → Domain resource policy",
+      "difficulty": "Medium"
+    },
+    {
+      "id": 18,
+      "question": "During a CodePipeline execution, the Deploy stage needs information from the Build stage (e.g., image tag). How is this information passed between stages?",
+      "options": [
+        "Through CloudFormation parameters",
+        "Using output artifacts and input artifacts",
+        "Via S3 bucket notifications",
+        "Through environment variables in Lambda"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "Output artifacts → Input artifacts. Build stage output artifact (pl. imageDetail.json) → Deploy stage input artifact.",
+        "whyCorrect": "Standard artifact passing mechanism in CodePipeline",
+        "whyWrong": [
+          "CloudFormation parameters nem stage közötti kommunikációra valók",
+          null,
+          "S3 notifications nem artifact passing",
+          "Lambda env vars nem persist across stages"
+        ]
+      },
+      "examTip": "Stage communication → Artifacts",
+      "difficulty": "Medium"
+    },
+    {
+      "id": 19,
+      "question": "A deployment to production requires automated rollback if CPU utilization exceeds 80% within 10 minutes of deployment. How should this be implemented?",
+      "options": [
+        "CloudWatch Alarm with Lambda to trigger rollback",
+        "CodeDeploy automatic rollback with CloudWatch Alarm trigger",
+        "EventBridge rule monitoring CPU and triggering rollback",
+        "Manual rollback based on CloudWatch dashboard"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "CodeDeploy automatic rollback native feature. Konfigurálj CloudWatch alarm-ot, kapcsold a deployment-hez. Ha ALARM state → automatic rollback.",
+        "whyCorrect": "Native CodeDeploy feature, no custom code needed",
+        "whyWrong": [
+          "Lambda = feleslegesen komplex, native feature létezik",
+          null,
+          "EventBridge nem rollback mechanism",
+          "Manual = nem automated"
+        ]
+      },
+      "examTip": "Automatic rollback → CodeDeploy + CloudWatch Alarm",
+      "difficulty": "Medium"
+    },
+    {
+      "id": 20,
+      "question": "A CodeBuild project needs to access resources in a private VPC. What must be configured? (Choose 2)",
+      "options": [
+        "VPC configuration in CodeBuild project settings",
+        "NAT Gateway for internet access",
+        "Security groups allowing CodeBuild access",
+        "VPC peering with CodeBuild VPC",
+        "Internet Gateway in the VPC"
+      ],
+      "correctIndex": [0, 2],
+      "explanation": {
+        "hu": "CodeBuild VPC config: 1) VPC Configuration (VPC, subnets, SGs), 2) Security Groups allow access to private resources. NAT Gateway csak ha internet access kell.",
+        "whyCorrect": "VPC config and security groups are required for private resource access",
+        "whyWrong": [
+          null,
+          "NAT Gateway optional, csak internet access-hez kell",
+          null,
+          "VPC peering nem szükséges, CodeBuild uses ENI",
+          "Internet Gateway nem szükséges private resource access-hez"
+        ]
+      },
+      "examTip": "CodeBuild VPC → VPC config + Security Groups",
+      "difficulty": "Medium",
+      "multipleAnswers": true
+    },
+    {
+      "id": 21,
+      "question": "An organization has multiple development teams. Each team needs isolated CodeArtifact repositories but should be able to share common packages. What architecture should be implemented?",
+      "options": [
+        "Separate domains for each team",
+        "Single domain with multiple repositories and upstream repository for shared packages",
+        "Single repository with team-based folders",
+        "Separate AWS accounts for each team"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "Single domain (org-level) + multiple repositories (team isolation) + upstream repository (shared packages). Domain lehetővé teszi cross-repository sharing-et.",
+        "whyCorrect": "Balances isolation with sharing using upstream repositories",
+        "whyWrong": [
+          "Separate domains = nehéz sharing",
+          null,
+          "Single repository = nincs team isolation",
+          "Separate accounts = feleslegesen komplex"
+        ]
+      },
+      "examTip": "Team isolation + sharing → Domain + multiple repos + upstream",
+      "difficulty": "Hard"
+    },
+    {
+      "id": 22,
+      "question": "A CodePipeline needs to trigger on commits to specific branches in GitHub. Which trigger configuration should be used?",
+      "options": [
+        "Polling with branch filter",
+        "EventBridge rule with GitHub webhook and branch filter",
+        "Lambda function monitoring GitHub API",
+        "CloudWatch Events with CodeCommit"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "EventBridge = event-driven (recommended). GitHub webhook + EventBridge rule branch filter-rel.",
+        "whyCorrect": "Event-driven, efficient, native integration",
+        "whyWrong": [
+          "Polling = legacy, inefficient",
+          null,
+          "Lambda = feleslegesen komplex",
+          "CloudWatch Events CodeCommit-hoz van, nem GitHub-hoz"
+        ]
+      },
+      "examTip": "GitHub trigger → EventBridge + webhook",
+      "difficulty": "Medium"
+    },
+    {
+      "id": 23,
+      "question": "Application code needs to reference the current build version during runtime. How should the build version be made available to the application in CodeBuild?",
+      "options": [
+        "Pass as environment variable using CODEBUILD_BUILD_NUMBER",
+        "Write to a file during build and package with application",
+        "Store in Parameter Store during build",
+        "All of the above are valid approaches"
+      ],
+      "correctIndex": 3,
+      "explanation": {
+        "hu": "Mind a három valid approach, választás use case-től függ: env var (runtime), file (packaged), Parameter Store (dynamic).",
+        "whyCorrect": "Multiple valid approaches depending on requirements",
+        "whyWrong": [
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      "examTip": "Build version → Multiple valid approaches",
+      "difficulty": "Medium"
+    },
+    {
+      "id": 24,
+      "question": "A company needs to perform security scanning (SAST) on code before it enters the build stage. At which stage should the security scanning action be placed?",
+      "options": [
+        "Source stage",
+        "Build stage at the beginning",
+        "Between Build and Test stages",
+        "Before Deploy stage"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "SAST (Static Application Security Testing) = code analysis. Build stage elején, build előtt. Early detection = cheaper fix.",
+        "whyCorrect": "Early in pipeline for shift-left security",
+        "whyWrong": [
+          "Source stage = csak source pull, nincs analysis",
+          null,
+          "Túl késő, build után",
+          "DAST ide való, nem SAST"
+        ]
+      },
+      "examTip": "SAST → Build stage elején",
+      "difficulty": "Medium"
+    },
+    {
+      "id": 25,
+      "question": "CodeBuild needs to authenticate to Amazon ECR to push Docker images. What is the RECOMMENDED authentication method?",
+      "options": [
+        "Store ECR credentials in Secrets Manager",
+        "Use IAM role attached to CodeBuild with ECR permissions",
+        "Use docker login with hardcoded credentials",
+        "Create IAM user with ECR access"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "IAM role attached to CodeBuild = secure, no credentials. Pre_build: aws ecr get-login-password | docker login.",
+        "whyCorrect": "Secure, no credentials, least privilege",
+        "whyWrong": [
+          "Felesleges Secrets Manager, IAM role jobb",
+          null,
+          "Hardcoded credentials = insecure",
+          "IAM user = credentials, nem recommended"
+        ]
+      },
+      "examTip": "ECR authentication → IAM role",
+      "difficulty": "Easy"
+    }
+  ],
+  "flashcards": [
+    {"id": "fc1", "front": "Mi a CodeCommit státusza 2024-től?", "back": "Deprecated új ügyfelek számára (2024 július). Meglévő ügyfelek használhatják tovább, de új fejlesztések nincsenek."},
+    {"id": "fc2", "front": "Mi a különbség a CodeBuild és CodeDeploy között?", "back": "CodeBuild: Build és teszt (fordítás, csomagolás)\nCodeDeploy: Deployment (telepítés célkörnyezetbe)"},
+    {"id": "fc3", "front": "Hol definiálod a build lépéseket CodeBuild-ben?", "back": "buildspec.yml fájlban a repository gyökerében"},
+    {"id": "fc4", "front": "Melyek a buildspec.yml fő fázisai?", "back": "install: Runtime és dependency telepítés\npre_build: Build előtti lépések\nbuild: Tényleges build parancsok\npost_build: Build utáni lépések (push, cleanup)"},
+    {"id": "fc5", "front": "Mi a CodeArtifact?", "back": "Managed artifact repository service - csomagok tárolása és megosztása (npm, Maven, PyPI, NuGet)"},
+    {"id": "fc6", "front": "Hány external connection lehet egy CodeArtifact repository-ban?", "back": "Maximum 1 external connection per repository"},
+    {"id": "fc7", "front": "Mi a Blue/Green deployment?", "back": "Két teljes környezet: Blue (jelenlegi) és Green (új)\nTraffic átváltás load balancer szinten\nZero downtime, gyors rollback\nHasználd ha: zero downtime szükséges"},
+    {"id": "fc8", "front": "Mi a Canary deployment?", "back": "Új verzió kis % forgalommal indul\nFokozatos traffic növelés ha sikeres\nMonitoring közben\nHasználd ha: gradual rollout, risk mitigation"},
+    {"id": "fc9", "front": "Mi a Rolling deployment?", "back": "Példányok frissítése egyenként vagy csoportokban\nKöltséghatékony (nincs dupla infrastruktúra)\nVan rövid downtime lehetséges\nHasználd ha: költségoptimalizálás fontosabb mint zero downtime"},
+    {"id": "fc10", "front": "Milyen deployment strategy-ket támogat a Lambda?", "back": "AllAtOnce: Azonnali átváltás\nCanary: Két lépésben (pl. Canary10Percent5Minutes)\nLinear: Egyenletes növekmények (pl. Linear10PercentEvery10Minutes)"},
+    {"id": "fc11", "front": "Mi a különbség a Canary és Linear deployment között?", "back": "Canary: 2 lépés (pl. 10% → 100%)\nLinear: Több egyenlő lépés (pl. 10% → 20% → 30% ... → 100%)"},
+    {"id": "fc12", "front": "Melyek a CodePipeline fő komponensei?", "back": "Stages: Logikai egységek\nActions: Feladatok a stage-ken belül\nTransitions: Átmenet stage-ek között\nArtifacts: Kimenet → Bemenet (S3-ban tárolva)"},
+    {"id": "fc13", "front": "Mi a maximum artifact size CodePipeline-ban?", "back": "5GB per artifact"},
+    {"id": "fc14", "front": "Hogyan oszd meg az artifact-okat stage-ek között?", "back": "Output artifacts → Input artifacts, S3 bucket-ben tárolva KMS titkosítással"},
+    {"id": "fc15", "front": "Hol tárolja a CodePipeline az artifact-okat?", "back": "S3 bucket-ben, KMS encryption-nel (cross-account esetén customer-managed KMS key szükséges)"},
+    {"id": "fc16", "front": "Hogyan működik a cross-account CodePipeline?", "back": "1. Pipeline account-ban CodePipeline service role\n2. Target account-ban cross-account role\n3. Trust relationship: Pipeline account → Target account\n4. KMS key policy: cross-account hozzáférés"},
+    {"id": "fc17", "front": "Mi szükséges cross-account artifact megosztáshoz?", "back": "Customer-managed KMS key (nem AWS managed)\nKMS key policy: mindkét account hozzáférése\nS3 bucket policy: cross-account PutObject/GetObject"},
+    {"id": "fc18", "front": "Mi a confused deputy protection?", "back": "External ID használata az AssumeRole-ban, hogy megakadályozzuk a unauthorized cross-account access-t"},
+    {"id": "fc19", "front": "Secrets Manager vs Parameter Store - mikor melyiket?", "back": "Secrets Manager: Automatic rotation, RDS integration, $0.40/secret/month\nParameter Store: Nincs auto-rotation, ingyenes (standard tier), hierarchical storage"},
+    {"id": "fc20", "front": "Hogyan használj secret-eket buildspec.yml-ben?", "back": "env:\n  secrets-manager:\n    DB_PASSWORD: prod/myapp/db:password\n  parameter-store:\n    API_KEY: /prod/myapp/api-key"},
+    {"id": "fc21", "front": "Mi a Secrets Manager automatic rotation?", "back": "Lambda function automatikusan frissíti a jelszót (pl. RDS, Redshift) megadott időközönként (pl. 30 nap)"},
+    {"id": "fc22", "front": "Hol futtasd az unit teszteket a pipeline-ban?", "back": "Build stage-ben (CodeBuild), a build parancsok részeként"},
+    {"id": "fc23", "front": "Hol futtasd az integration teszteket?", "back": "Post-deployment stage-ben, külön CodeBuild project"},
+    {"id": "fc24", "front": "Milyen típusú teszteket integráljunk a CI/CD-be?", "back": "Unit tests: Build phase\nIntegration tests: Post-deployment\nSecurity scans: SAST, DAST, dependency check\nAcceptance tests: Production-like environment"},
+    {"id": "fc25", "front": "Milyen cache típusok vannak CodeBuild-ben?", "back": "S3 Cache: Artifact cache S3-ban\nLocal Cache: Docker layer, source, custom cache a build host-on"},
+    {"id": "fc26", "front": "Hogyan gyorsíts Docker build-et CodeBuild-ben?", "back": "cache:\n  paths:\n    - /var/lib/docker/**/*\n\nÉs használj --cache-from flag-et"},
+    {"id": "fc27", "front": "Mi a buildspec.yml version legújabb száma?", "back": "0.2 (támogatja a runtime version-öket és artifact filter-eket)"},
+    {"id": "fc28", "front": "Mi az appspec.yml?", "back": "CodeDeploy deployment konfiguráció - deployment hooks, file locations, permissions"},
+    {"id": "fc29", "front": "Melyek a CodeDeploy lifecycle hooks sorrendje?", "back": "1. ApplicationStop\n2. BeforeInstall\n3. Install (automatic)\n4. AfterInstall\n5. ApplicationStart\n6. ValidateService"},
+    {"id": "fc30", "front": "Mi a CodeDeploy deployment group?", "back": "Target instances vagy Lambda/ECS resources halmaza, ahol a deployment történik (tags, ASG, vagy manual selection)"},
+    {"id": "fc31", "front": "Mi a deployment configuration CodeDeploy-ban?", "back": "OneAtATime: 1 instance egyszerre\nHalfAtATime: 50% egyszerre\nAllAtOnce: Összes egyszerre"},
+    {"id": "fc32", "front": "Hogyan trigger-elj automatic rollback-et CodeDeploy-ban?", "back": "CloudWatch alarm-ot konfigurálj, és kapcsold a deployment-hez. Ha ALARM state → automatic rollback"},
+    {"id": "fc33", "front": "Maximum pipeline-ok száma régiónként?", "back": "300 (növelhető support ticket-tel)"},
+    {"id": "fc34", "front": "Maximum CodeBuild build timeout?", "back": "60 perc (1 óra)"},
+    {"id": "fc35", "front": "Maximum concurrent builds CodeBuild-ben?", "back": "Alapértelmezett: 60, növelhető support ticket-tel"},
+    {"id": "fc36", "front": "Mi a CodeStar Connections?", "back": "AWS service GitHub, GitLab, Bitbucket integrációhoz - OAuth app helyett ajánlott (automatic webhook management)"},
+    {"id": "fc37", "front": "GitHub App vs OAuth App?", "back": "GitHub App: Ajánlott, finomabb permission control\nOAuth App: Legacy, deprecating"},
+    {"id": "fc38", "front": "Hogyan trigger-eld a pipeline-t branch filter-rel?", "back": "CodeStar Connection-ban event configuration - csak bizonyos branch-ek trigger-elik (pl. csak main és develop)"},
+    {"id": "fc39", "front": "Mi a least privilege a CodePipeline IAM role-ban?", "back": "Csak azokat az akciókat engedélyezd, amik ténylegesen szükségesek minden stage-hez (pl. S3 GetObject/PutObject, CodeBuild StartBuild)"},
+    {"id": "fc40", "front": "Hogyan titkosítsd az artifact bucket-et?", "back": "S3 bucket encryption KMS-sel (customer-managed key), KMS key policy cross-account access-hez"},
+    {"id": "fc41", "front": "Mi a VPC configuration CodeBuild-ben?", "back": "CodeBuild project-et VPC-be helyezed, hogy hozzáférjen private resources-hoz (RDS, ElastiCache) security group-okon keresztül"},
+    {"id": "fc42", "front": "CodePipeline stage fails - hol nézd meg a logot?", "back": "CloudWatch Logs-ban minden action részletes logot ír"},
+    {"id": "fc43", "front": "CodeBuild build fail-el - mi a legelső lépés?", "back": "1. buildspec.yml syntax\n2. IAM role permissions\n3. Environment variables\n4. CloudWatch Logs részletes error message"},
+    {"id": "fc44", "front": "CodeDeploy deployment fail - leggyakoribb okok?", "back": "1. CodeDeploy agent nincs telepítve/futva\n2. appspec.yml syntax hiba\n3. IAM instance profile permissions hiánya\n4. Health check failure"},
+    {"id": "fc45", "front": "Mi a manual approval action CodePipeline-ban?", "back": "Emberi jóváhagyás stage a pipeline-ban (pl. production deployment előtt) - SNS notification, approval/reject gomb"},
+    {"id": "fc46", "front": "Hogyan implementálj conditional stage-et?", "back": "Lambda invoke action-nel, ami true/false-t ad vissza, és ezen alapszik a következő stage execution"},
+    {"id": "fc47", "front": "Mi a custom action CodePipeline-ban?", "back": "Saját action provider (pl. 3rd party tool integration) - Lambda vagy worker process lehet"},
+    {"id": "fc48", "front": "Hogyan ossz meg CodeArtifact package-eket cross-account?", "back": "1. Domain-level resource policy\n2. Target account-ot add hozzá a policy-hez\n3. Target account: configure repository upstream"},
+    {"id": "fc49", "front": "SCENARIO: Zero-downtime deployment for ECS?", "back": "Blue/Green deployment with CodeDeploy + ALB target groups"},
+    {"id": "fc50", "front": "SCENARIO: Pipeline fails Access Denied to S3 cross-account?", "back": "Add customer-managed KMS key with cross-account policy, update S3 bucket policy"},
+    {"id": "fc51", "front": "SCENARIO: Rollback if error rate > 5%?", "back": "Configure CloudWatch alarm for error rate, enable automatic rollback in CodeDeploy"},
+    {"id": "fc52", "front": "SCENARIO: Build takes too long?", "back": "1. Docker layer cache (local)\n2. S3 cache for dependencies\n3. Parallelize steps\n4. Larger compute type"},
+    {"id": "fc53", "front": "SCENARIO: Secrets visible in build logs?", "back": "Use Secrets Manager or Parameter Store SecureString, reference in buildspec.yml env.secrets-manager"},
+    {"id": "fc54", "front": "SCENARIO: Test new feature with 10% users?", "back": "Canary deployment (Canary10Percent5Minutes) with monitoring and automatic rollback"},
+    {"id": "fc55", "front": "EXAM TIP: 'cost-effective' keyword?", "back": "Parameter Store > Secrets Manager, Rolling > Blue/Green"},
+    {"id": "fc56", "front": "EXAM TIP: 'zero downtime' keyword?", "back": "Blue/Green deployment"},
+    {"id": "fc57", "front": "EXAM TIP: 'gradual rollout with monitoring'?", "back": "Canary deployment with CloudWatch alarms"},
+    {"id": "fc58", "front": "EXAM TIP: 'multi-account deployment'?", "back": "Customer-managed KMS key, cross-account IAM role, S3 bucket policy"},
+    {"id": "fc59", "front": "EXAM TIP: 'automatic secret rotation'?", "back": "Secrets Manager (Parameter Store nem támogatja)"},
+    {"id": "fc60", "front": "EXAM TIP: 'build optimization'?", "back": "Caching (S3 or local), Parallel builds, Larger compute type"}
+  ]
+}

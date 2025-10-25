@@ -1,0 +1,445 @@
+{
+  "id": "domain4",
+  "name": "Monitoring & Logging",
+  "icon": "📊",
+  "percentage": 15,
+  "color": "blue",
+  "questions": [
+    {
+      "id": 1,
+      "question": "CloudWatch alarm needs BOTH CPU>80% AND NetworkIn>1GB. Which feature?",
+      "options": [
+        "Multiple alarms",
+        "Composite alarms",
+        "Metric math",
+        "EventBridge rule"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "Composite alarms = combine with AND/OR"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 2,
+      "question": "Composite alarms CANNOT trigger?",
+      "options": [
+        "SNS notification",
+        "EC2 stop/terminate",
+        "Lambda via EventBridge",
+        "Create OpsItem"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "Composite → NO EC2 actions directly"
+      },
+      "difficulty": "Medium"
+    },
+    {
+      "id": 3,
+      "question": "CloudWatch Logs Insights query syntax for errors?",
+      "options": [
+        "fields @message | filter level = ERROR",
+        "filter @message like /ERROR/ | sort @timestamp desc",
+        "SELECT * WHERE message LIKE '%ERROR%'",
+        "grep ERROR | tail"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "Logs Insights = filter @message like /ERROR/"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 4,
+      "question": "CloudTrail Event Type OFF by default and expensive?",
+      "options": [
+        "Management events",
+        "Data events",
+        "Insights events",
+        "All ON by default"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "Data events = OFF + expensive"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 5,
+      "question": "X-Ray provides what?",
+      "options": [
+        "Log aggregation",
+        "Distributed request tracing",
+        "API auditing",
+        "Metrics viz"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "X-Ray = distributed tracing"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 6,
+      "question": "VPC Flow Logs can be sent to? (Choose 2)",
+      "options": [
+        "CloudWatch Logs",
+        "S3",
+        "Kinesis Data Firehose",
+        "SNS"
+      ],
+      "correctIndex": [
+        0,
+        1,
+        2
+      ],
+      "explanation": {
+        "hu": "Flow Logs: CWL, S3, Kinesis Firehose"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 7,
+      "question": "CloudWatch alarm evaluation periods = 3, datapoints to alarm = 3. What does this mean?",
+      "options": [
+        "Alarm if ANY 3 periods breach",
+        "Alarm if ALL 3 consecutive periods breach",
+        "Alarm if average of 3 periods exceeds",
+        "Check every 3 minutes"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "3 out of 3 = all consecutive must breach"
+      },
+      "difficulty": "Medium"
+    },
+    {
+      "id": 8,
+      "question": "Which service provides who did what API call audit trail?",
+      "options": [
+        "CloudWatch Logs",
+        "CloudTrail",
+        "X-Ray",
+        "VPC Flow Logs"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "CloudTrail = API audit trail"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 9,
+      "question": "Lambda function timeout troubleshooting. Which service shows timing breakdown?",
+      "options": [
+        "CloudWatch Logs",
+        "CloudWatch Metrics",
+        "X-Ray",
+        "CloudTrail"
+      ],
+      "correctIndex": 2,
+      "explanation": {
+        "hu": "X-Ray shows subsegment timing"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 10,
+      "question": "CloudWatch Logs retention default?",
+      "options": [
+        "7 days",
+        "30 days",
+        "Never expire (indefinite)",
+        "1 year"
+      ],
+      "correctIndex": 2,
+      "explanation": {
+        "hu": "Default = indefinite"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 11,
+      "question": "Query CloudWatch Logs with SQL-like syntax?",
+      "options": [
+        "CloudWatch Logs Insights",
+        "Export to S3 then Athena",
+        "CloudWatch Metrics",
+        "Lambda function"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "Logs Insights = interactive queries"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 12,
+      "question": "Cross-account CloudWatch Logs aggregation (2024 feature)?",
+      "options": [
+        "Not possible",
+        "Kinesis Firehose only",
+        "Native CloudWatch cross-account log sharing",
+        "Lambda copying logs"
+      ],
+      "correctIndex": 2,
+      "explanation": {
+        "hu": "Sept 2024: native cross-account"
+      },
+      "difficulty": "Medium"
+    },
+    {
+      "id": 13,
+      "question": "EventBridge vs CloudWatch Events?",
+      "options": [
+        "Different services",
+        "EventBridge is CloudWatch Events rebranded + enhanced",
+        "EventBridge is deprecated",
+        "Use only CloudWatch Events"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "Same service, EventBridge = enhanced"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 14,
+      "question": "Container Insights provides metrics for?",
+      "options": [
+        "ECS, EKS, Fargate",
+        "Only ECS",
+        "Only EKS",
+        "Only Lambda"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "Container Insights: ECS, EKS, Fargate, K8s"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 15,
+      "question": "CloudWatch anomaly detection requires minimum how much data?",
+      "options": [
+        "1 day",
+        "3 days",
+        "2 weeks",
+        "1 month"
+      ],
+      "correctIndex": 2,
+      "explanation": {
+        "hu": "Anomaly detection = 2 weeks training"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 16,
+      "question": "ELB access logs stored where?",
+      "options": [
+        "CloudWatch Logs",
+        "S3 only",
+        "Both CloudWatch and S3",
+        "EBS volumes"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "ELB access logs = S3 only"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 17,
+      "question": "Metric filter creates what from CloudWatch Logs?",
+      "options": [
+        "Alarms",
+        "Custom metrics",
+        "Dashboards",
+        "New log groups"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "Metric filters → custom metrics"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 18,
+      "question": "CloudWatch Logs encryption at rest?",
+      "options": [
+        "Not encrypted",
+        "Default SSE with AWS-managed keys",
+        "Must use customer-managed KMS key",
+        "Only with S3 export"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "Default AES-256 encryption"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 19,
+      "question": "Systems Manager OpsCenter aggregates issues from?",
+      "options": [
+        "CloudWatch Alarms only",
+        "CloudWatch, Config, GuardDuty, EventBridge",
+        "Only Config",
+        "Manual entry only"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "OpsCenter aggregates multiple services"
+      },
+      "difficulty": "Medium"
+    },
+    {
+      "id": 20,
+      "question": "High-resolution CloudWatch metrics granularity?",
+      "options": [
+        "1 minute",
+        "1 second",
+        "5 minutes",
+        "10 seconds"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "High-resolution = 1 second"
+      },
+      "difficulty": "Easy"
+    }
+  ],
+  "flashcards": [
+    {
+      "id": "fc1",
+      "front": "CloudWatch metrics resolution?",
+      "back": "Standard: 1 minute (default)\nHigh-Resolution: 1 second\n\nHigh-res = sub-minute scaling"
+    },
+    {
+      "id": "fc2",
+      "front": "CloudWatch Logs retention default?",
+      "back": "Default: Indefinite (forever)\nConfigurable: 1-3653 days\n\nSet retention → cost optimization!"
+    },
+    {
+      "id": "fc3",
+      "front": "VPC Flow Logs traffic types?",
+      "back": "ALL - Accept + Reject\nACCEPT - Only accepted\nREJECT - Only rejected\n\nDestinations: CWL, S3, Kinesis"
+    },
+    {
+      "id": "fc4",
+      "front": "Logs Insights query errors?",
+      "back": "fields @timestamp, @message\n| filter @message like /ERROR/\n| sort @timestamp desc\n| limit 25"
+    },
+    {
+      "id": "fc5",
+      "front": "CloudWatch Alarm states?",
+      "back": "OK - Within threshold\nALARM - Breached\nINSUFFICIENT_DATA - Not enough data"
+    },
+    {
+      "id": "fc6",
+      "front": "Composite Alarm limitations?",
+      "back": "CAN:\n✅ SNS, OpsItem, Incident\n\nCANNOT:\n❌ Auto Scaling\n❌ EC2 actions"
+    },
+    {
+      "id": "fc7",
+      "front": "CloudTrail event types?",
+      "back": "Management: ON, CreateBucket\nData: OFF (expensive!), GetObject\nInsights: OFF, ML unusual activity"
+    },
+    {
+      "id": "fc8",
+      "front": "EventBridge schedule expressions?",
+      "back": "Rate: rate(5 minutes)\nCron: cron(0 12 * * ? *)\n  (Daily noon UTC)\ncron(0 9 ? * MON-FRI *)\n  (Weekdays 9AM)"
+    },
+    {
+      "id": "fc9",
+      "front": "EventBridge targets?",
+      "back": "Compute: Lambda, ECS, Batch\nMessaging: SNS, SQS\nAutomation: SSM, CodePipeline\nStreaming: Kinesis"
+    },
+    {
+      "id": "fc10",
+      "front": "X-Ray components?",
+      "back": "Trace: End-to-end path\nSegment: Work by service\nSubsegment: Downstream call\nService Map: Visual graph"
+    },
+    {
+      "id": "fc11",
+      "front": "X-Ray sampling?",
+      "back": "fixed_target: 1 req/sec always\nrate: 0.1 (10% additional)\n\nPurpose: Reduce costs"
+    },
+    {
+      "id": "fc12",
+      "front": "CloudWatch Logs encryption?",
+      "back": "At Rest:\n- Default: SSE (AES-256)\n- Optional: KMS key\nIn Transit: TLS"
+    },
+    {
+      "id": "fc13",
+      "front": "Metric filters célja?",
+      "back": "Extract metrics from log patterns\nExample: Count ERROR\nCreate alarms on metrics\n\nPattern: [time, type=ERROR, msg]"
+    },
+    {
+      "id": "fc14",
+      "front": "SNS fan-out pattern?",
+      "back": "CW Alarm → SNS\n  ├→ Email/SMS\n  ├→ Lambda\n  ├→ SQS\n  └→ HTTP (Slack)\n\nMultiple channels!"
+    },
+    {
+      "id": "fc15",
+      "front": "Cross-account log aggregation?",
+      "back": "Native (Sept 2024):\n- Direct copying\n- @aws.account, @aws.region\n- First copy FREE\n\nAlt: Kinesis Firehose"
+    },
+    {
+      "id": "fc16",
+      "front": "ELB Access Logs content?",
+      "back": "Request time, Client/Target IP\nHTTP codes, Bytes\nUser agent, SSL cipher\n\nStorage: S3 only"
+    },
+    {
+      "id": "fc17",
+      "front": "Container Insights?",
+      "back": "Metrics: cluster, pod, container\nSupports: ECS, EKS, Fargate, K8s\nAgent: CW agent or ADOT\nAuto dashboards"
+    },
+    {
+      "id": "fc18",
+      "front": "Systems Manager OpsCenter?",
+      "back": "Central operational issues\nAuto deduplication\nRunbook automation\nIntegration: CW, Config, GuardDuty"
+    },
+    {
+      "id": "fc19",
+      "front": "CloudWatch Anomaly Detection?",
+      "back": "ML-based patterns\n2 weeks training min\nAdjusts: seasonal, trend\nCreates normal behavior band"
+    },
+    {
+      "id": "fc20",
+      "front": "Athena query CW Logs?",
+      "back": "1. Export to S3\n2. Convert to Parquet\n3. Create Athena table\n4. Query with SQL\n5. Partition by date"
+    },
+    {
+      "id": "fc21",
+      "front": "Logs Insights hourly error count?",
+      "back": "filter @message like /ERROR/\n| stats count(*) by bin(1h)\n| sort count desc"
+    },
+    {
+      "id": "fc22",
+      "front": "CW Dashboard widgets?",
+      "back": "Line: Time series\nNumber: Latest + sparkline\nStacked Area: Contribution\nBar: Comparison\nAlarm: Status\nText: Markdown"
+    },
+    {
+      "id": "fc23",
+      "front": "EventBridge EC2 terminate pattern?",
+      "back": "{\n  source: [aws.ec2],\n  detail-type: [State-change],\n  detail: {state: [terminated]}\n}"
+    },
+    {
+      "id": "fc24",
+      "front": "Lambda trigger from CW Alarm?",
+      "back": "CW Alarm → SNS → Lambda\n\nLambda receives:\nRecords[].Sns.Message\n(alarm details JSON)"
+    },
+    {
+      "id": "fc25",
+      "front": "Optimize CW Logs cost?",
+      "back": "1. Set retention policy\n2. Export to S3 long-term\n3. S3 Lifecycle → Glacier\n4. Sampling high-volume\n5. Metric filters vs all logs"
+    },
+    {
+      "id": "fc26",
+      "front": "Service vs Personal Health?",
+      "back": "Service Health:\n- Public status\n- All services\n\nPersonal Health:\n- Account-specific\n- Resources impacted\n- EventBridge integration"
+    }
+  ]
+}

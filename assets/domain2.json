@@ -1,0 +1,516 @@
+{
+  "id": "domain2",
+  "name": "Configuration Management & IaC",
+  "icon": "⚙️",
+  "percentage": 17,
+  "color": "purple",
+  "questions": [
+    {
+      "id": 1,
+      "question": "A company needs to deploy a CloudFormation stack to 50 AWS accounts across 3 regions. New accounts should automatically receive the stack. Which solution is MOST operationally efficient?",
+      "options": [
+        "CloudFormation StackSets with self-managed permissions",
+        "CloudFormation StackSets with service-managed permissions and AWS Organizations",
+        "AWS CDK deployed to each account via script",
+        "Terraform with manual account configuration"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "Service-managed StackSets + Organizations = automatikus menedzsment"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 2,
+      "question": "A CloudFormation stack is in UPDATE_ROLLBACK_FAILED state. The DBA accidentally deleted a database that CloudFormation was trying to delete during rollback. How should this be resolved?",
+      "options": [
+        "Delete the stack and recreate",
+        "Use continue-update-rollback CLI command with resources to skip",
+        "Manually create the database and update again",
+        "Contact AWS Support immediately"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "continue-update-rollback --resources-to-skip"
+      },
+      "difficulty": "Medium"
+    },
+    {
+      "id": 3,
+      "question": "A development team wants to preview CloudFormation changes before deploying to production. Which feature allows them to see exactly what will change?",
+      "options": [
+        "CloudFormation drift detection",
+        "CloudFormation change sets",
+        "AWS Config rules",
+        "CloudFormation stack policies"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "Change sets = preview changes"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 4,
+      "question": "An application configuration includes database endpoints that vary by region. How should this be managed in CloudFormation?",
+      "options": [
+        "Use Parameters with region-specific values",
+        "Use Mappings with FindInMap function",
+        "Hardcode for each region's template",
+        "Store in Systems Manager Parameter Store"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "Mappings = region-specific static values"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 5,
+      "question": "AWS Config detected that an EC2 security group was manually modified. What is the BEST way to identify this drift?",
+      "options": [
+        "Run CloudFormation drift detection",
+        "Compare template with console manually",
+        "Use CloudTrail to see who made change",
+        "Use AWS Config compliance check"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "Drift detection = compare current vs template"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 6,
+      "question": "A microservices application has 20+ configuration parameters. Parameters should be hierarchically organized. Which solution provides this with LEAST cost?",
+      "options": [
+        "Secrets Manager",
+        "Parameter Store Standard tier with path-based hierarchy",
+        "Parameter Store Advanced tier",
+        "DynamoDB table"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "Parameter Store Standard = FREE, hierarchical"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 7,
+      "question": "A CloudFormation template for VPC infrastructure needs to export subnet IDs for use by application stacks. How should this be implemented?",
+      "options": [
+        "Use Export in Outputs section, reference with ImportValue",
+        "Store subnet IDs in Parameter Store",
+        "Use nested stacks",
+        "Hardcode subnet IDs"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "Export/ImportValue = cross-stack references"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 8,
+      "question": "An organization requires that all EC2 instances must have encrypted EBS volumes. This must be enforced preventively. Which solution BEST achieves this?",
+      "options": [
+        "AWS Config rule with auto-remediation",
+        "Service Control Policy (SCP) denying unencrypted volume creation",
+        "CloudFormation Guard policy",
+        "Systems Manager compliance automation"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "SCP = preventive (blocks before creation)"
+      },
+      "difficulty": "Medium"
+    },
+    {
+      "id": 9,
+      "question": "Systems Manager Automation document needs to restart services on 100+ EC2 instances simultaneously. How should targets be specified?",
+      "options": [
+        "List all instance IDs manually",
+        "Use resource tags with targets parameter",
+        "Create 100+ separate automation executions",
+        "Use Lambda to loop through instances"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "Resource tags = dynamic targeting"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 10,
+      "question": "AWS Config detected S3 bucket versioning is disabled. The bucket should be auto-remediated. Which solution requires LEAST operational overhead?",
+      "options": [
+        "EventBridge rule triggering Lambda function",
+        "AWS Config automatic remediation with SSM Automation document",
+        "Manual remediation via CloudFormation update",
+        "CloudWatch alarm triggering Lambda"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "Config + SSM Automation = native remediation"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 11,
+      "question": "A CloudFormation stack needs to invoke a third-party API during stack creation. How should this be implemented?",
+      "options": [
+        "Lambda-backed custom resource",
+        "CloudFormation macro",
+        "UserData script in EC2",
+        "This cannot be done"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "Lambda-backed custom resources extend CloudFormation"
+      },
+      "difficulty": "Medium"
+    },
+    {
+      "id": 12,
+      "question": "StackSets need to deploy to all accounts in Production OU and automatically deploy to new accounts. What configuration is required?",
+      "options": [
+        "Self-managed permissions with manual account list",
+        "Service-managed permissions with OU targets and auto-deployment enabled",
+        "Separate StackSet for each account",
+        "Lambda function to monitor OU"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "Service-managed + OU targets + auto-deployment"
+      },
+      "difficulty": "Medium"
+    },
+    {
+      "id": 13,
+      "question": "AWS CDK application is written in TypeScript. What command generates the CloudFormation template for review?",
+      "options": [
+        "cdk deploy",
+        "cdk synth",
+        "cdk compile",
+        "cdk bootstrap"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "cdk synth = generate template"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 14,
+      "question": "A CloudFormation stack creates critical RDS database. The database should never be deleted during stack updates. How can this be enforced?",
+      "options": [
+        "Use DeletionPolicy: Retain",
+        "Use stack policy denying Delete on database resource",
+        "Enable termination protection on stack",
+        "Both A and B"
+      ],
+      "correctIndex": 3,
+      "explanation": {
+        "hu": "DeletionPolicy + Stack Policy = complete protection"
+      },
+      "difficulty": "Medium"
+    },
+    {
+      "id": 15,
+      "question": "Parameter Store parameter contains database password. Cost is a concern. Parameters don't need rotation. Which tier should be used?",
+      "options": [
+        "Parameter Store Standard (free)",
+        "Parameter Store Advanced",
+        "Secrets Manager",
+        "Store in S3 with encryption"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "Standard tier = FREE, sufficient"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 16,
+      "question": "Multiple CloudFormation stacks have common resources. How should this be organized to promote reusability?",
+      "options": [
+        "Copy-paste resources into each stack",
+        "Use nested stacks with reusable templates",
+        "Create separate foundation stack with Exports",
+        "Both B and C are valid approaches"
+      ],
+      "correctIndex": 3,
+      "explanation": {
+        "hu": "Both nested stacks and foundation stacks valid"
+      },
+      "difficulty": "Medium"
+    },
+    {
+      "id": 17,
+      "question": "Systems Manager Automation needs approval before executing changes in production. Which action type provides built-in approval?",
+      "options": [
+        "aws:approve",
+        "aws:waitForApproval",
+        "aws:pause",
+        "aws:manualApproval"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "aws:approve = built-in approval action"
+      },
+      "difficulty": "Hard"
+    },
+    {
+      "id": 18,
+      "question": "AWS Config should detect when EC2 instances don't have required tags. Which approach is BEST?",
+      "options": [
+        "Create custom AWS Config rule using Lambda",
+        "Use managed Config rule required-tags",
+        "Use CloudTrail to monitor RunInstances API",
+        "Use EventBridge to check tags"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "Managed Config rule required-tags available"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 19,
+      "question": "A CloudFormation template needs conditional logic: create NAT Gateway only if Environment parameter is Production. How is this implemented?",
+      "options": [
+        "Use Conditions section with Fn::Equals",
+        "Use Lambda custom resource",
+        "Create two separate templates",
+        "Use Parameters with allowed values"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "Conditions section = native conditional logic"
+      },
+      "difficulty": "Medium"
+    },
+    {
+      "id": 20,
+      "question": "AWS Config auto-remediation failed 3 times. What happens next?",
+      "options": [
+        "Config stops trying and marks as non-compliant",
+        "Config continues indefinitely",
+        "Manual intervention required",
+        "Config sends notification to SNS"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "After MaximumAutomaticAttempts, Config stops"
+      },
+      "difficulty": "Medium"
+    },
+    {
+      "id": 21,
+      "question": "Systems Manager Parameter Store parameter must be accessible only from specific VPC. How should access be restricted?",
+      "options": [
+        "IAM policy with aws:SourceVpc condition",
+        "Security groups",
+        "VPC endpoint with endpoint policy",
+        "Both A and C"
+      ],
+      "correctIndex": 3,
+      "explanation": {
+        "hu": "VPC endpoint + IAM condition = both needed"
+      },
+      "difficulty": "Medium"
+    },
+    {
+      "id": 22,
+      "question": "CloudFormation StackSet needs different configurations per region (AMI IDs vary). How should this be handled?",
+      "options": [
+        "Use Mappings in template with region-specific values",
+        "Create separate templates per region",
+        "Use Parameters passed per region",
+        "Both A and C are valid"
+      ],
+      "correctIndex": 3,
+      "explanation": {
+        "hu": "Both Mappings and Parameters valid"
+      },
+      "difficulty": "Medium"
+    },
+    {
+      "id": 23,
+      "question": "A company uses CloudFormation to manage infrastructure. A team member manually changed a security group rule. How can you revert this change?",
+      "options": [
+        "Run drift detection then update stack with no changes",
+        "Manually revert the change in console",
+        "Delete and recreate the stack",
+        "CloudFormation automatically reverts drift"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "Update stack with same template reverts drift"
+      },
+      "difficulty": "Medium"
+    },
+    {
+      "id": 24,
+      "question": "AWS CDK constructs have three levels (L1, L2, L3). Which level provides the highest abstraction?",
+      "options": [
+        "L1 (CfnXxx)",
+        "L2 (Xxx)",
+        "L3 (Patterns)",
+        "All levels have same abstraction"
+      ],
+      "correctIndex": 2,
+      "explanation": {
+        "hu": "L3 Patterns = highest abstraction"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 25,
+      "question": "Systems Manager State Manager should ensure specific software is always installed. What is this capability called?",
+      "options": [
+        "Patch Manager",
+        "Session Manager",
+        "State Manager with Association",
+        "Run Command with schedule"
+      ],
+      "correctIndex": 2,
+      "explanation": {
+        "hu": "State Manager with Association = desired state"
+      },
+      "difficulty": "Medium"
+    }
+  ],
+  "flashcards": [
+    {
+      "id": "fc1",
+      "front": "CloudFormation stack states?",
+      "back": "CREATE_COMPLETE\nUPDATE_IN_PROGRESS\nUPDATE_ROLLBACK_COMPLETE\nDELETE_FAILED\nROLLBACK_COMPLETE"
+    },
+    {
+      "id": "fc2",
+      "front": "Change Sets célja?",
+      "back": "Preview changes: Added, Modified, Replaced, Removed\n\n1. Create Change Set\n2. Review\n3. Execute or Delete"
+    },
+    {
+      "id": "fc3",
+      "front": "Drift detection működése?",
+      "back": "Manual changes detection\nCompare: current vs template\nStatus: IN_SYNC or DRIFTED\n\nRemediation: Update stack"
+    },
+    {
+      "id": "fc4",
+      "front": "CloudFormation functions?",
+      "back": "!Ref - Reference\n!GetAtt - Get attribute\n!Sub - Substitute\n!Join - Concatenate\n!ImportValue - Cross-stack\n!Select - Pick from list"
+    },
+    {
+      "id": "fc5",
+      "front": "StackSets permissions: Service vs Self?",
+      "back": "Service-Managed:\n- AWS Organizations\n- Automatic roles\n- Simpler\n\nSelf-Managed:\n- Manual IAM roles\n- More control"
+    },
+    {
+      "id": "fc6",
+      "front": "StackSets deployment options?",
+      "back": "Parallel - Multiple accounts\nFailure Tolerance - Max failures\nAuto Deployment - New accounts\nRegional Concurrency - Regions parallel"
+    },
+    {
+      "id": "fc7",
+      "front": "StackSets use cases?",
+      "back": "✅ Multi-account/region\n✅ Security baselines\n✅ Compliance controls\n✅ Foundation resources\n\n❌ Single account → Regular stack"
+    },
+    {
+      "id": "fc8",
+      "front": "CDK construct levels?",
+      "back": "L1: CfnXxx (low-level)\nL2: Xxx (best practices) ← Most used\nL3: Patterns (complete solutions)"
+    },
+    {
+      "id": "fc9",
+      "front": "CDK vs CloudFormation?",
+      "back": "CDK:\n✅ Type-safe\n✅ IDE support\n✅ Unit testing\n✅ Logic (loops)\n\nCFN:\n✅ Simpler\n✅ No synthesis\n✅ Wider adoption"
+    },
+    {
+      "id": "fc10",
+      "front": "CDK synthesis flow?",
+      "back": "CDK App (TS/Python)\n  ↓ cdk synth\nCloudFormation Template\n  ↓ cdk deploy\nAWS Resources"
+    },
+    {
+      "id": "fc11",
+      "front": "SAM Transform?",
+      "back": "Transform: AWS::Serverless-2016-10-31\n\nExpands:\nAWS::Serverless::Function\n  → Lambda + IAM + Logs"
+    },
+    {
+      "id": "fc12",
+      "front": "SAM use case?",
+      "back": "✅ Lambda + API Gateway\n✅ Serverless apps\n✅ Local testing (sam local)\n✅ Simplified syntax\n\nLimit: Only serverless"
+    },
+    {
+      "id": "fc13",
+      "front": "SAM CLI commands?",
+      "back": "sam init - Create project\nsam build - Build\nsam local start-api - Local API\nsam local invoke - Test Lambda\nsam deploy - Deploy\nsam logs - Fetch logs"
+    },
+    {
+      "id": "fc14",
+      "front": "Parameter Store tiers?",
+      "back": "Standard: FREE, 4KB, 10K params\nAdvanced: $0.05/mo, 8KB, 100K params, policies\n\nDefault → Standard!"
+    },
+    {
+      "id": "fc15",
+      "front": "Parameter Store vs Secrets Manager?",
+      "back": "Secrets Manager:\n- Rotation needed\n- $0.40/mo\n\nParameter Store:\n- No rotation\n- FREE\n- App config\n\nRotation → Secrets Manager"
+    },
+    {
+      "id": "fc16",
+      "front": "State Manager célja?",
+      "back": "Desired state enforcement\nConfiguration drift remediation\nScheduled associations\n\nExample: Ensure software installed"
+    },
+    {
+      "id": "fc17",
+      "front": "SSM Automation?",
+      "back": "Multi-step workflows (runbooks)\n\nActions:\n- aws:executeAwsApi\n- aws:executeScript\n- aws:waitForAwsResourceProperty\n- aws:branch"
+    },
+    {
+      "id": "fc18",
+      "front": "Config Rules types?",
+      "back": "AWS Managed: 200+ pre-built\n  (s3-bucket-public-read-prohibited)\n\nCustom: Lambda-based\n\nHa létezik managed → használd!"
+    },
+    {
+      "id": "fc19",
+      "front": "Config auto-remediation flow?",
+      "back": "Rule evaluates\n  ↓ NON_COMPLIANT\nTrigger Remediation\n  ↓ SSM Automation\nResource fixed\n  ↓ COMPLIANT"
+    },
+    {
+      "id": "fc20",
+      "front": "Conformance Packs?",
+      "back": "Collection of Config rules\nBased on: PCI-DSS, HIPAA, CIS\nDeploy via StackSets (multi-account)\n\n'PCI compliance' → Conformance Pack"
+    },
+    {
+      "id": "fc21",
+      "front": "AppConfig deployment strategies?",
+      "back": "AllAtOnce - 100% instant\nLinear - X% every Y min\nCanary - Test → Full\n\n+ CloudWatch Alarms\n+ Auto rollback"
+    },
+    {
+      "id": "fc22",
+      "front": "AppConfig validators?",
+      "back": "JSON Schema - Syntax validation\nLambda - Custom business logic\n\nComplex validation → Lambda"
+    },
+    {
+      "id": "fc23",
+      "front": "Stack Policies célja?",
+      "back": "Protect resources from updates/deletes\nJSON document\n\nExample:\nDeny Update:Delete on ProductionDB\n\n'Protect from deletion' → Stack Policy"
+    },
+    {
+      "id": "fc24",
+      "front": "CloudFormation rollback scenarios?",
+      "back": "CREATE fails → Auto rollback (delete)\nUPDATE fails → Rollback to previous\nUPDATE_ROLLBACK_FAILED → continue-update-rollback CLI\nManual → Deploy previous template"
+    },
+    {
+      "id": "fc25",
+      "front": "StackSets target options?",
+      "back": "Account IDs - Explicit list\nOUs - All in OU (best practice)\nOrganization - All accounts\n\nAuto Deployment → New accounts automatic"
+    },
+    {
+      "id": "fc26",
+      "front": "Cross-account template sharing?",
+      "back": "Option 1: S3 Bucket Policy\n  (Allow GetObject)\n\nOption 2: Service Catalog\n  (Governed deployments)\n\n'Share templates' → S3 or Service Catalog"
+    }
+  ]
+}

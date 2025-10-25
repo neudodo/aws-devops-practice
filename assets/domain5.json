@@ -1,0 +1,451 @@
+{
+  "id": "domain5",
+  "name": "Incident & Event Response",
+  "icon": "🚨",
+  "percentage": 14,
+  "color": "red",
+  "questions": [
+    {
+      "id": 1,
+      "question": "Automatically stop EC2 instances tagged Environment=Dev at 10 PM daily?",
+      "options": [
+        "CloudWatch alarm",
+        "EventBridge scheduled rule → Lambda",
+        "Auto Scaling scheduled action",
+        "Systems Manager Maintenance Window"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "EventBridge cron + Lambda"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 2,
+      "question": "GuardDuty finding indicates compromised instance. Automatic isolation?",
+      "options": [
+        "Lambda changes security group",
+        "EventBridge → SSM Automation (AWS-IsolateEC2Instance)",
+        "AWS Config remediation",
+        "CloudWatch alarm"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "EventBridge + SSM Automation"
+      },
+      "difficulty": "Medium"
+    },
+    {
+      "id": 3,
+      "question": "Multiple services need to process same event independently. Best solution?",
+      "options": [
+        "SNS fan-out",
+        "SQS queue",
+        "EventBridge event bus with multiple rules",
+        "Kinesis stream"
+      ],
+      "correctIndex": 2,
+      "explanation": {
+        "hu": "EventBridge = content-based filtering"
+      },
+      "difficulty": "Medium"
+    },
+    {
+      "id": 4,
+      "question": "SSM Automation manual approval before critical step?",
+      "options": [
+        "aws:approve",
+        "aws:pause",
+        "aws:waitForApproval",
+        "aws:manualGate"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "aws:approve = built-in approval"
+      },
+      "difficulty": "Hard"
+    },
+    {
+      "id": 5,
+      "question": "Lambda intermittent timeout. Identify slow external call?",
+      "options": [
+        "CloudWatch Logs",
+        "X-Ray tracing",
+        "Increase timeout",
+        "CloudWatch Metrics"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "X-Ray = timing breakdown"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 6,
+      "question": "RDS database failover notification?",
+      "options": [
+        "CloudWatch alarm",
+        "RDS event notifications to SNS",
+        "CloudTrail",
+        "AWS Config"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "RDS event notifications"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 7,
+      "question": "S3 object upload should trigger Lambda. Configuration?",
+      "options": [
+        "EventBridge rule on S3 PutObject",
+        "S3 event notification → Lambda",
+        "CloudTrail with Lambda",
+        "CloudWatch alarm"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "S3 event notification = simplest"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 8,
+      "question": "Auto Scaling oscillates frequently. Reduce sensitivity?",
+      "options": [
+        "Increase cooldown",
+        "Increase alarm evaluation periods",
+        "Disable scale-in",
+        "Change to scheduled scaling"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "More evaluation periods"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 9,
+      "question": "AWS Config detects non-compliant resource. Automatic remediation?",
+      "options": [
+        "EventBridge → Lambda",
+        "Config auto-remediation with SSM Automation",
+        "CloudWatch alarm",
+        "Manual fix"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "Config + SSM Automation"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 10,
+      "question": "Different severity errors to different teams (SNS)?",
+      "options": [
+        "Multiple SNS topics",
+        "SNS subscription filter policies",
+        "EventBridge multiple rules",
+        "Lambda processor"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "SNS subscription filter policies"
+      },
+      "difficulty": "Medium"
+    },
+    {
+      "id": 11,
+      "question": "SSM Automation execution failed. Check detailed steps where?",
+      "options": [
+        "CloudWatch Logs",
+        "Automation execution history in Systems Manager console",
+        "CloudTrail",
+        "X-Ray"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "SSM console execution history"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 12,
+      "question": "EC2 connectivity troubleshooting checklist? (Choose 3)",
+      "options": [
+        "Security Groups",
+        "Network ACLs",
+        "Route Tables",
+        "KMS keys",
+        "IAM policies"
+      ],
+      "correctIndex": [
+        0,
+        1,
+        2
+      ],
+      "explanation": {
+        "hu": "SG, NACL, Route Tables"
+      },
+      "difficulty": "Medium"
+    },
+    {
+      "id": 13,
+      "question": "VPC Reachability Analyzer purpose?",
+      "options": [
+        "Monitor traffic in real-time",
+        "Test connectivity without sending packets",
+        "Encrypt traffic",
+        "Create VPC peering"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "Analyzes path without packets"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 14,
+      "question": "ECS cannot pull image error. Top cause?",
+      "options": [
+        "ECR permissions (task execution role)",
+        "Wrong image URI",
+        "Private subnet without VPC endpoints",
+        "All of the above"
+      ],
+      "correctIndex": 3,
+      "explanation": {
+        "hu": "All three are common causes"
+      },
+      "difficulty": "Medium"
+    },
+    {
+      "id": 15,
+      "question": "RDS too many connections error. Solution?",
+      "options": [
+        "Increase max_connections parameter",
+        "Use RDS Proxy (connection pooling)",
+        "Scale RDS instance",
+        "All of the above"
+      ],
+      "correctIndex": 3,
+      "explanation": {
+        "hu": "All are valid solutions"
+      },
+      "difficulty": "Medium"
+    },
+    {
+      "id": 16,
+      "question": "Lambda in VPC can't access internet. Solution?",
+      "options": [
+        "NAT Gateway in public subnet",
+        "Internet Gateway",
+        "VPC endpoints for AWS services",
+        "Both A and C"
+      ],
+      "correctIndex": 3,
+      "explanation": {
+        "hu": "NAT Gateway + VPC endpoints"
+      },
+      "difficulty": "Medium"
+    },
+    {
+      "id": 17,
+      "question": "EventBridge scheduled expression for weekdays 9 AM?",
+      "options": [
+        "rate(1 day)",
+        "cron(0 9 ? * MON-FRI *)",
+        "cron(9 0 * * 1-5)",
+        "schedule(weekdays 9am)"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "Cron: minute hour day month dow year"
+      },
+      "difficulty": "Medium"
+    },
+    {
+      "id": 18,
+      "question": "System Manager Run Command vs Automation?",
+      "options": [
+        "Run Command: single command",
+        "Automation: multi-step workflows",
+        "Both A and B",
+        "No difference"
+      ],
+      "correctIndex": 2,
+      "explanation": {
+        "hu": "Run Command single, Automation multi-step"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 19,
+      "question": "GuardDuty analyzes which data sources? (Choose 3)",
+      "options": [
+        "VPC Flow Logs",
+        "CloudTrail",
+        "DNS logs",
+        "CloudWatch Logs",
+        "X-Ray traces"
+      ],
+      "correctIndex": [
+        0,
+        1,
+        2
+      ],
+      "explanation": {
+        "hu": "VPC Flow, CloudTrail, DNS, EKS audit"
+      },
+      "difficulty": "Medium"
+    },
+    {
+      "id": 20,
+      "question": "Automated snapshot of compromised instance for forensics?",
+      "options": [
+        "EventBridge → Lambda creates EBS snapshots",
+        "AWS Backup",
+        "Manual snapshot",
+        "SSM Automation"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "Lambda triggered by GuardDuty"
+      },
+      "difficulty": "Medium"
+    }
+  ],
+  "flashcards": [
+    {
+      "id": "fc1",
+      "front": "SNS message filtering?",
+      "back": "Subscription filter policies:\n{\n  Severity: [HIGH, CRITICAL],\n  Service: [EC2, RDS]\n}\n\nPurpose: Relevant subscribers only"
+    },
+    {
+      "id": "fc2",
+      "front": "EventBridge vs CW Events?",
+      "back": "Same service!\nEventBridge = CW Events rebranded\n\nEventBridge adds:\n✅ Schema registry\n✅ Event replay\n✅ SaaS integrations\n\nNew projects → EventBridge"
+    },
+    {
+      "id": "fc3",
+      "front": "SSM Automation actions?",
+      "back": "aws:executeAwsApi - Call API\naws:executeScript - Python/PS\naws:waitForAwsResourceProperty\naws:branch - Conditional\naws:sleep - Wait"
+    },
+    {
+      "id": "fc4",
+      "front": "Config auto-remediation flow?",
+      "back": "Rule evaluates\n  ↓ NON_COMPLIANT\nTrigger Remediation\n  ↓ SSM Automation\nFixed\n  ↓ COMPLIANT"
+    },
+    {
+      "id": "fc5",
+      "front": "Config remediation params?",
+      "back": "Automatic: true/false\nMaxAttempts: 1-25\nRetrySeconds: 60-2678400\nConcurrencyRate%\nErrorPercentage"
+    },
+    {
+      "id": "fc6",
+      "front": "Lambda isolate EC2?",
+      "back": "1. Create isolation SG (no ingress)\n2. modify_instance_attribute\n3. Apply to instance\n\nTrigger: GuardDuty → EventBridge → Lambda"
+    },
+    {
+      "id": "fc7",
+      "front": "Step Functions mikor?",
+      "back": "✅ Multi-step workflow\n✅ Manual approval\n✅ Parallel actions\n✅ Conditional logic\n✅ Long-running\n\nExample: Incident → Isolate + Forensics + Notify"
+    },
+    {
+      "id": "fc8",
+      "front": "EC2 connectivity checklist?",
+      "back": "1. Security Groups (port?)\n2. NACLs (inbound + outbound?)\n3. Route Table (IGW?)\n4. Instance Status\n5. VPC Flow Logs (rejected?)"
+    },
+    {
+      "id": "fc9",
+      "front": "VPC Reachability Analyzer?",
+      "back": "Test connectivity without packets\nIdentifies blocking:\n- SG, NACL, Route Tables, IGW/NAT\n\nUse: Why can't EC2 reach RDS?"
+    },
+    {
+      "id": "fc10",
+      "front": "ECS image pull failure top 3?",
+      "back": "1. ECR permissions (task exec role)\n  ecr:GetAuthorizationToken\n  ecr:BatchGetImage\n2. Private subnet (VPC endpoints)\n  ecr.api, ecr.dkr\n3. Image URI wrong"
+    },
+    {
+      "id": "fc11",
+      "front": "Lambda timeout troubleshooting?",
+      "back": "1. CW Logs: REPORT Duration\n2. Current timeout: Default 3s, max 15min\n3. Code optimization?\n4. External API slow?\n5. VPC cold start?"
+    },
+    {
+      "id": "fc12",
+      "front": "RDS Performance Insights?",
+      "back": "- Identify slow queries\n- DB load visualization\n- Wait events analysis\n- Top SQL statements\nRetention: 7 days free"
+    },
+    {
+      "id": "fc13",
+      "front": "X-Ray Service Map?",
+      "back": "Visual dependency graph\nLatency per service\nError rates\nRequest count\nBottleneck ID\n\n'Which microservice slow?' → X-Ray"
+    },
+    {
+      "id": "fc14",
+      "front": "GuardDuty EventBridge pattern?",
+      "back": "{\n  source: [aws.guardduty],\n  detail-type: [GuardDuty Finding],\n  detail: {\n    severity: [7, 8, 9]\n  }\n}\nTarget: Lambda"
+    },
+    {
+      "id": "fc15",
+      "front": "Scale on SQS queue depth?",
+      "back": "messages = event['messagesVisible']\ndesired = max(1, messages // 100)\n\nasg.set_desired_capacity(\n  DesiredCapacity=desired\n)"
+    },
+    {
+      "id": "fc16",
+      "front": "CodeDeploy auto rollback?",
+      "back": "rollback_configuration:\n  enabled: true\n  rollback_triggers:\n    - CloudWatch alarm ARN\n\nOn ALARM → rollback"
+    },
+    {
+      "id": "fc17",
+      "front": "Lambda VPC can't access internet?",
+      "back": "Options:\n1. NAT Gateway (for internet)\n2. VPC Endpoints (for AWS services)\n\nCheck:\n- Route Table (NAT?)\n- SG (outbound?)\n- Private subnet?"
+    },
+    {
+      "id": "fc18",
+      "front": "RDS too many connections?",
+      "back": "1. max_connections parameter\n2. Connection pooling:\n  - Lambda: RDS Proxy\n  - App: Pool library\n3. Optimize queries\n4. Scale RDS"
+    },
+    {
+      "id": "fc19",
+      "front": "Circuit breaker pattern?",
+      "back": "States:\nCLOSED: Normal\nOPEN: Block calls (threshold)\nHALF-OPEN: Test recovery\n\nPurpose: Prevent cascade failures"
+    },
+    {
+      "id": "fc20",
+      "front": "AWS Health EventBridge?",
+      "back": "{\n  source: [aws.health],\n  detail-type: [AWS Health Event],\n  detail: {\n    eventTypeCategory: [issue, scheduledChange]\n  }\n}"
+    },
+    {
+      "id": "fc21",
+      "front": "Multi-region incident centralization?",
+      "back": "1. EventBridge bus each region\n2. Forward to global bus (us-east-1)\n3. Centralized Lambda\n4. SNS notifications"
+    },
+    {
+      "id": "fc22",
+      "front": "Test RDS Multi-AZ failover?",
+      "back": "aws rds reboot-db-instance\n  --db-instance-identifier mydb\n  --force-failover\n\nExpected: 1-2min downtime, same endpoint"
+    },
+    {
+      "id": "fc23",
+      "front": "System vs Instance Status?",
+      "back": "System (AWS issue):\n- Network, power, hardware\n- Fix: Wait or migrate\n\nInstance (your issue):\n- OS boot, kernel, memory\n- Fix: Reboot or investigate"
+    },
+    {
+      "id": "fc24",
+      "front": "ECS task failure top 3?",
+      "back": "1. CannotPullContainerError:\n  ECR perms, VPC endpoints\n2. OutOfMemoryError:\n  Increase task memory\n3. ResourceInitializationError:\n  Task exec role perms"
+    },
+    {
+      "id": "fc25",
+      "front": "Auto snapshot for forensics?",
+      "back": "GuardDuty finding\n  → EventBridge\n  → Lambda\n\nLambda:\n- Get instance volumes\n- create_snapshot() for each\n- Tag: Forensic: instance-id"
+    },
+    {
+      "id": "fc26",
+      "front": "Incident response workflow?",
+      "back": "1. DETECT - GuardDuty, CW\n2. ANALYZE - Classify severity\n3. CONTAIN - Isolate resources\n4. ERADICATE - Remove threat\n5. RECOVER - Restore\n6. POST-INCIDENT - Review, update"
+    }
+  ]
+}

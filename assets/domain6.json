@@ -1,0 +1,450 @@
+{
+  "id": "domain6",
+  "name": "Security & Compliance",
+  "icon": "🔒",
+  "percentage": 17,
+  "color": "orange",
+  "questions": [
+    {
+      "id": 1,
+      "question": "Database password automatic rotation every 30 days?",
+      "options": [
+        "Parameter Store",
+        "Secrets Manager",
+        "KMS",
+        "IAM"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "Secrets Manager = built-in rotation"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 2,
+      "question": "IAM allows S3:PutObject. SCP denies S3:PutObject. Result?",
+      "options": [
+        "Allow (IAM precedence)",
+        "DENY (explicit deny wins)",
+        "Depends on resource policy",
+        "Depends on order"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "Explicit DENY always wins"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 3,
+      "question": "KMS key in Account A used by Account B?",
+      "options": [
+        "Copy key",
+        "Key policy allows Account B + IAM in B",
+        "Share via RAM",
+        "Export and import"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "Key policy + IAM both sides"
+      },
+      "difficulty": "Medium"
+    },
+    {
+      "id": 4,
+      "question": "Enforce encrypted EBS volumes (preventive)?",
+      "options": [
+        "AWS Config rule",
+        "SCP denying unencrypted",
+        "CloudFormation Guard",
+        "Lambda check"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "SCP = preventive"
+      },
+      "difficulty": "Medium"
+    },
+    {
+      "id": 5,
+      "question": "Parameter Store accessible only from VPC?",
+      "options": [
+        "IAM with aws:SourceVpc",
+        "VPC endpoint",
+        "Security groups",
+        "Both A and B"
+      ],
+      "correctIndex": 3,
+      "explanation": {
+        "hu": "VPC endpoint + IAM condition"
+      },
+      "difficulty": "Medium"
+    },
+    {
+      "id": 6,
+      "question": "IAM Access Analyzer purpose?",
+      "options": [
+        "Analyze log access patterns",
+        "Identify overly permissive access and generate least-privilege policies",
+        "Monitor API calls",
+        "Encrypt access keys"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "Access Analyzer = overpermissive access"
+      },
+      "difficulty": "Medium"
+    },
+    {
+      "id": 7,
+      "question": "S3 bucket policy deny unencrypted uploads. Condition?",
+      "options": [
+        "StringNotEquals s3:x-amz-server-side-encryption",
+        "Correct",
+        "No",
+        "Maybe"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "Deny if encryption header missing"
+      },
+      "difficulty": "Medium"
+    },
+    {
+      "id": 8,
+      "question": "CloudTrail logs tamper-proof for 7 years?",
+      "options": [
+        "S3 bucket with versioning",
+        "CloudTrail log validation + S3 Object Lock",
+        "Glacier storage",
+        "MFA Delete"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "Log validation + Object Lock"
+      },
+      "difficulty": "Medium"
+    },
+    {
+      "id": 9,
+      "question": "GuardDuty detected unusual API calls from IAM user. First step?",
+      "options": [
+        "Delete IAM user",
+        "Rotate access keys immediately and investigate",
+        "Disable AWS account",
+        "Ignore if known user"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "Contain: rotate keys, investigate"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 10,
+      "question": "Security Hub aggregates findings from? (Choose 3)",
+      "options": [
+        "GuardDuty",
+        "Inspector",
+        "Macie",
+        "X-Ray",
+        "VPC Flow Logs"
+      ],
+      "correctIndex": [
+        0,
+        1,
+        2
+      ],
+      "explanation": {
+        "hu": "GuardDuty, Inspector, Macie, Config, IAM Access Analyzer"
+      },
+      "difficulty": "Medium"
+    },
+    {
+      "id": 11,
+      "question": "ECR image scanning. Basic vs Enhanced?",
+      "options": [
+        "Basic: CVE OS packages",
+        "Enhanced: Inspector, OS + language packages",
+        "Both",
+        "Neither"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "Enhanced = more comprehensive"
+      },
+      "difficulty": "Medium"
+    },
+    {
+      "id": 12,
+      "question": "All accounts must have CloudTrail enabled. Enforcement? (Choose 2)",
+      "options": [
+        "SCP preventing CloudTrail disable",
+        "Config organization conformance pack",
+        "StackSets to create CloudTrail",
+        "Manual in each account"
+      ],
+      "correctIndex": [
+        0,
+        1,
+        2
+      ],
+      "explanation": {
+        "hu": "SCP (preventive), Config (detective), StackSets (provision)"
+      },
+      "difficulty": "Hard"
+    },
+    {
+      "id": 13,
+      "question": "Secrets in CodeBuild buildspec.yml?",
+      "options": [
+        "Use secrets-manager or parameter-store sections",
+        "Hardcode",
+        "Environment variables",
+        "S3"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "Use secrets-manager/parameter-store"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 14,
+      "question": "Cross-account IAM role ExternalId purpose?",
+      "options": [
+        "Additional authentication",
+        "Prevent confused deputy",
+        "Encrypt role",
+        "No purpose"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "ExternalId prevents confused deputy"
+      },
+      "difficulty": "Medium"
+    },
+    {
+      "id": 15,
+      "question": "Macie finds what in S3?",
+      "options": [
+        "Malware",
+        "PII and PHI",
+        "Vulnerabilities",
+        "Network threats"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "Macie = PII, PHI discovery"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 16,
+      "question": "KMS automatic key rotation frequency?",
+      "options": [
+        "Every 90 days",
+        "Every 365 days (customer-managed)",
+        "Every 3 years (AWS-managed)",
+        "Manual only"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "Customer CMK: 365d, AWS-managed: 3yr"
+      },
+      "difficulty": "Medium"
+    },
+    {
+      "id": 17,
+      "question": "Envelope encryption. Why use it?",
+      "options": [
+        "Required by AWS",
+        "Encrypt large data (KMS 4KB limit)",
+        "Cheaper",
+        "Faster decryption"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "Envelope encryption bypasses KMS size limits"
+      },
+      "difficulty": "Medium"
+    },
+    {
+      "id": 18,
+      "question": "Security Groups vs Network ACLs?",
+      "options": [
+        "SG: stateful instance, NACL: stateless subnet",
+        "Same",
+        "Different",
+        "Depends"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "SG stateful, NACL stateless"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 19,
+      "question": "Inspector scans what?",
+      "options": [
+        "ECR images",
+        "Lambda functions",
+        "EC2 instances",
+        "All of the above"
+      ],
+      "correctIndex": 3,
+      "explanation": {
+        "hu": "Inspector: ECR, Lambda, EC2"
+      },
+      "difficulty": "Easy"
+    },
+    {
+      "id": 20,
+      "question": "VPC Endpoints: Gateway vs Interface?",
+      "options": [
+        "Gateway: S3/DynamoDB (FREE)",
+        "Interface: 130+ services (paid)",
+        "Both",
+        "Neither"
+      ],
+      "correctIndex": 2,
+      "explanation": {
+        "hu": "Gateway S3/DynamoDB, Interface others"
+      },
+      "difficulty": "Easy"
+    }
+  ],
+  "flashcards": [
+    {
+      "id": "fc1",
+      "front": "Secrets Manager vs Parameter Store?",
+      "back": "DB passwords + rotation → Secrets Manager\nApp config (no rotation) → Parameter Store (FREE)\n\nRotation needed → Secrets Manager"
+    },
+    {
+      "id": "fc2",
+      "front": "IAM Policy Evaluation?",
+      "back": "1. Explicit DENY → DENY\n2. SCPs\n3. Permission Boundaries\n4. Identity policies\n5. Resource policies\n\nFinal = Intersection - denies"
+    },
+    {
+      "id": "fc3",
+      "front": "SCP key features?",
+      "back": "Guardrails (NOT grants!)\nDefine max permissions\nManagement account: Exempt\nService-linked roles: Exempt\nExplicit Deny: Always wins"
+    },
+    {
+      "id": "fc4",
+      "front": "SCP best practices?",
+      "back": "1. Less restrictive at root\n2. More restrictive at OUs\n3. Test thoroughly\n4. Explicit Deny for critical\n5. IAM Access Analyzer validation"
+    },
+    {
+      "id": "fc5",
+      "front": "KMS key types?",
+      "back": "AWS-managed:\n- Auto 3yr rotation\n- AWS control\n\nCustomer-managed:\n- Optional 365d rotation\n- You control\n\nImported:\n- Manual rotation\n- You control"
+    },
+    {
+      "id": "fc6",
+      "front": "Envelope encryption?",
+      "back": "1. KMS generates DEK\n2. DEK encrypts data\n3. KMS encrypts DEK with CMK\n4. Store encrypted DEK + data\n\nWhy: Large data + KMS limits"
+    },
+    {
+      "id": "fc7",
+      "front": "KMS key policy for Secrets Manager?",
+      "back": "{\n  Effect: Allow,\n  Principal: {Service: secretsmanager},\n  Action: [\n    kms:Decrypt,\n    kms:GenerateDataKey\n  ]\n}"
+    },
+    {
+      "id": "fc8",
+      "front": "Security Groups vs NACLs?",
+      "back": "SG: Instance, Stateful, Allow only\nNACL: Subnet, Stateless, Allow+Deny, Numbered\n\nExplicit Deny → NACL"
+    },
+    {
+      "id": "fc9",
+      "front": "VPC Endpoints types?",
+      "back": "Gateway:\n- S3, DynamoDB\n- FREE\n\nInterface (PrivateLink):\n- 130+ services\n- Hourly + data charges"
+    },
+    {
+      "id": "fc10",
+      "front": "GuardDuty monitors?",
+      "back": "Data sources:\n- VPC Flow Logs\n- CloudTrail (Mgmt + S3 Data)\n- DNS logs\n- EKS Audit Logs\n\nFindings: Crypto mining, compromised, recon"
+    },
+    {
+      "id": "fc11",
+      "front": "GuardDuty auto-response?",
+      "back": "Finding → EventBridge → Lambda\n  → Isolate (modify SG)\n  → SNS Notification"
+    },
+    {
+      "id": "fc12",
+      "front": "Inspector scans?",
+      "back": "- ECR images: OS + app vulns\n- Lambda: Code + deps\n- EC2: Network + software\n\n2024: Maps ECR → running containers"
+    },
+    {
+      "id": "fc13",
+      "front": "Macie use cases?",
+      "back": "Finds in S3:\n- PII (Personally Identifiable)\n- PHI (Protected Health)\n- Financial data\n\nCustom identifiers: Regex"
+    },
+    {
+      "id": "fc14",
+      "front": "Security Hub aggregates?",
+      "back": "30+ services:\n- GuardDuty, Inspector, Macie\n- Config, IAM Access Analyzer\n\nStandards:\n- AWS Best Practices\n- CIS, PCI DSS"
+    },
+    {
+      "id": "fc15",
+      "front": "Config auto-remediation example?",
+      "back": "Rule: s3-bucket-encryption\nAction: SSM Automation\nDoc: AWS-EnableS3BucketEncryption\nAutomatic: true\nMaxAttempts: 3"
+    },
+    {
+      "id": "fc16",
+      "front": "CloudTrail event types?",
+      "back": "Management (ON, low cost):\n- CreateBucket\n\nData (OFF, expensive!):\n- GetObject (high volume)\n\nInsights (OFF, ML):\n- Unusual activity"
+    },
+    {
+      "id": "fc17",
+      "front": "CloudTrail multi-account?",
+      "back": "Organization Trail:\n- In management account\n- Auto logs all members\n- Centralized S3\n- KMS encryption"
+    },
+    {
+      "id": "fc18",
+      "front": "WAF managed rule groups?",
+      "back": "- Core Rule Set (CRS)\n- Known Bad Inputs\n- SQL Database\n- Linux/Windows OS\n- PHP/WordPress\n\nIntegration: CloudFront, ALB, API GW"
+    },
+    {
+      "id": "fc19",
+      "front": "Shield Standard vs Advanced?",
+      "back": "Standard (FREE):\n- L3/4 protection\n- Automatic\n\nAdvanced ($3k/mo):\n- L7 protection (+ WAF)\n- 24/7 DDoS Response\n- Cost protection"
+    },
+    {
+      "id": "fc20",
+      "front": "ECR scanning: Basic vs Enhanced?",
+      "back": "Basic (Clair):\n- OS packages\n\nEnhanced (Inspector):\n- OS + language packages\n- Python, Java, etc.\n\nRecommended: Enhanced"
+    },
+    {
+      "id": "fc21",
+      "front": "ECR scan on push?",
+      "back": "ImageScanningConfiguration:\n  ScanOnPush: true\n\nEventBridge:\n- source: aws.inspector2\n- severity: CRITICAL\n\nTarget: Lambda (quarantine)"
+    },
+    {
+      "id": "fc22",
+      "front": "IaC security scanning?",
+      "back": "Checkov: CFN, TF, K8s, CDK\ntfsec/Trivy: Terraform\ncfn-nag: CloudFormation\ncdk-nag: CDK\n\nCodeBuild: Pre-build command"
+    },
+    {
+      "id": "fc23",
+      "front": "Secrets in CodeBuild?",
+      "back": "env:\n  secrets-manager:\n    DOCKER_PASS: prod/docker:password\n  parameter-store:\n    DB_HOST: /prod/db/host\n\nNEVER hardcode!"
+    },
+    {
+      "id": "fc24",
+      "front": "Cross-account IAM role trust?",
+      "back": "{\n  Effect: Allow,\n  Principal: {AWS: arn:account:root},\n  Action: sts:AssumeRole,\n  Condition: {\n    StringEquals: {\n      sts:ExternalId: unique-id\n    }\n  }\n}\n\nExternalId: Confused deputy"
+    },
+    {
+      "id": "fc25",
+      "front": "IAM Access Analyzer?",
+      "back": "Capabilities:\n- Identify external sharing\n- Unused access\n- Policy validation\n- Generate least-privilege from CloudTrail\n\nUse: Principle of least privilege"
+    },
+    {
+      "id": "fc26",
+      "front": "PCI-DSS compliance automation?",
+      "back": "1. Conformance Pack: PCI template\n2. StackSets (all accounts)\n3. Config Rules evaluate\n4. Auto-remediation: SSM\n5. Security Hub: Aggregation"
+    }
+  ]
+}
