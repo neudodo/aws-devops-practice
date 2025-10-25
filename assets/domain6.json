@@ -150,7 +150,7 @@
         "X-Ray",
         "VPC Flow Logs"
       ],
-      "correctIndex": [
+      "correctIndexes": [
         0,
         1,
         2
@@ -158,7 +158,8 @@
       "explanation": {
         "hu": "GuardDuty, Inspector, Macie, Config, IAM Access Analyzer"
       },
-      "difficulty": "Medium"
+      "difficulty": "Medium",
+      "multipleAnswers": true
     },
     {
       "id": 11,
@@ -184,7 +185,7 @@
         "StackSets to create CloudTrail",
         "Manual in each account"
       ],
-      "correctIndex": [
+      "correctIndexes": [
         0,
         1,
         2
@@ -192,7 +193,8 @@
       "explanation": {
         "hu": "SCP (preventive), Config (detective), StackSets (provision)"
       },
-      "difficulty": "Hard"
+      "difficulty": "Hard",
+      "multipleAnswers": true
     },
     {
       "id": 13,

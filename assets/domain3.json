@@ -74,14 +74,15 @@
         "Need ultra-low latency",
         "Need host-based routing"
       ],
-      "correctIndex": [
+      "correctIndexes": [
         0,
         2
       ],
       "explanation": {
         "hu": "NLB: static IPs + ultra-low latency"
       },
-      "difficulty": "Medium"
+      "difficulty": "Medium",
+      "multipleAnswers": true
     },
     {
       "id": 6,
@@ -273,7 +274,7 @@
         "Amazon EC2 (AMIs only)",
         "AWS Lambda code"
       ],
-      "correctIndex": [
+      "correctIndexes": [
         0,
         1,
         2
@@ -281,7 +282,8 @@
       "explanation": {
         "hu": "AWS Backup: RDS, EBS, DynamoDB, EFS, FSx"
       },
-      "difficulty": "Medium"
+      "difficulty": "Medium",
+      "multipleAnswers": true
     },
     {
       "id": 19,

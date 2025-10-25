@@ -133,10 +133,10 @@
         setCurrentView('test');
       };
 
-      const submitAnswer = (answerIndex) => {
+      const submitAnswer = (isCorrect) => {
         setTestState(prev => ({
           ...prev,
-          answers: [...prev.answers, answerIndex],
+          answers: [...prev.answers, isCorrect],
           showExplanation: true
         }));
       };
@@ -146,7 +146,7 @@
         if (nextIndex < testState.questions.length) {
           setTestState(prev => ({ ...prev, currentQuestion: nextIndex, showExplanation: false }));
         } else {
-          const correct = testState.answers.filter((ans, idx) => ans === testState.questions[idx].correctIndex).length;
+          const correct = testState.answers.filter(a => a === true).length;
           const total = testState.questions.length;
           const percentage = Math.round((correct / total) * 100);
           setScores(prev => ({ ...prev, [testState.domainId]: { correct, total, percentage } }));
@@ -298,110 +298,186 @@
     }
 
     function PracticeTest({ testState, domain, onSubmitAnswer, onNextQuestion, onRetake, onBackHome }) {
-      if (testState.completed) {
-        const score = testState.answers.filter((ans, idx) => ans === testState.questions[idx].correctIndex).length;
-        const total = testState.questions.length;
-        const percentage = Math.round((score / total) * 100);
-        const grade = percentage >= 92 ? 'A+' : percentage >= 80 ? 'A' : percentage >= 68 ? 'B' : 'C';
+        const [selectedAnswers, setSelectedAnswers] = useState([]);
+        const [showExplanation, setShowExplanation] = useState(false);
+        const currentQ = testState.questions[testState.currentQuestion];
+        // --- shuffledOptions state ---
+        const [shuffledOptions, setShuffledOptions] = useState([]);
+
+        useEffect(() => {
+          if (currentQ) {
+            const combined = currentQ.options.map((opt, idx) => ({ opt, idx }));
+            const shuffled = combined.sort(() => Math.random() - 0.5);
+            setShuffledOptions(shuffled);
+            setSelectedAnswers([]);
+            setShowExplanation(false);
+          }
+        // eslint-disable-next-line
+        }, [testState.currentQuestion]);
+
+        const progress = ((testState.currentQuestion + 1) / testState.questions.length) * 100;
+
+        const toggleAnswer = (idx) => {
+            if (showExplanation) return;
+            setSelectedAnswers(prev => 
+                prev.includes(idx) ? prev.filter(i => i !== idx) : [...prev, idx]
+            );
+        };
+
+        const submitAnswers = () => {
+            if (selectedAnswers.length === 0) return;
+
+            // Ensure correctIndexes always an array, from either correctIndexes or correctIndex
+            let correctIndexes = [];
+            if (Array.isArray(currentQ.correctIndexes)) {
+                correctIndexes = currentQ.correctIndexes;
+            } else if (Array.isArray(currentQ.correctIndex)) {
+                correctIndexes = currentQ.correctIndex;
+            } else if (typeof currentQ.correctIndex !== "undefined") {
+                correctIndexes = [currentQ.correctIndex];
+            }
+
+            const isCorrect =
+                selectedAnswers.length === correctIndexes.length &&
+                correctIndexes.every(i => selectedAnswers.includes(i));
+
+            onSubmitAnswer(isCorrect);
+            setShowExplanation(true);
+        };
+
+        const nextQuestion = () => {
+            setSelectedAnswers([]);
+            setShowExplanation(false);
+            onNextQuestion();
+        };
+
+        if (testState.completed) {
+            const score = testState.answers.filter(a => a === true).length;
+            const total = testState.questions.length;
+            const percentage = Math.round((score / total) * 100);
+            const grade = percentage >= 92 ? 'A+' : percentage >= 80 ? 'A' : percentage >= 68 ? 'B' : 'C';
+
+            return (
+                <div className="max-w-2xl mx-auto">
+                    <div className="bg-white rounded-xl shadow-lg p-8 text-center space-y-6">
+                        <h2 className="text-3xl font-bold">{domain.name} Results</h2>
+                        <div className="py-6">
+                            <div className="text-6xl font-bold text-blue-600 mb-2">{score}/{total}</div>
+                            <div className="text-3xl text-gray-700 mb-4">{percentage}%</div>
+                            <div className="text-2xl font-semibold">Grade: {grade}</div>
+                        </div>
+                        <div className="flex gap-4">
+                            <button onClick={onRetake} className="flex-1 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700">
+                                Retake Test
+                            </button>
+                            <button onClick={onBackHome} className="flex-1 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300">
+                                Back Home
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
         return (
-          <div className="max-w-2xl mx-auto">
-            <div className="bg-white rounded-xl shadow-lg p-8 text-center space-y-6">
-              <h2 className="text-3xl font-bold">{domain.name} Results</h2>
-              <div className="py-6">
-                <div className="text-6xl font-bold text-blue-600 mb-2">{score}/{total}</div>
-                <div className="text-3xl text-gray-700 mb-4">{percentage}%</div>
-                <div className="text-2xl font-semibold">Grade: {grade}</div>
-              </div>
-              <div className="flex gap-4">
-                <button onClick={onRetake} className="flex-1 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700">Retake Test</button>
-                <button onClick={onBackHome} className="flex-1 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300">Back Home</button>
-              </div>
+            <div className="max-w-3xl mx-auto">
+                <div className="mb-6">
+                    <div className="flex justify-between text-sm text-gray-600 mb-2">
+                        <span>Question {testState.currentQuestion + 1} of {testState.questions.length}</span>
+                        <span>Progress: {Math.round(progress)}%</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div className="bg-blue-600 h-2 rounded-full transition-all" style={{ width: `${progress}%` }} />
+                    </div>
+                </div>
+
+                <div className="bg-white rounded-xl shadow-lg p-8 space-y-6">
+                    <h3 className="text-xl font-semibold">{currentQ.question}</h3>
+                    {currentQ.correctIndexes && (
+                        <p className="text-sm text-gray-500">(Choose {currentQ.correctIndexes.length})</p>
+                    )}
+
+                    <div className="space-y-3">
+                        {shuffledOptions.map(({ opt, idx: originalIdx }, displayIdx) => {
+                          const isSelected = selectedAnswers.includes(originalIdx);
+                          const correctIndexes = currentQ.correctIndexes ?? [currentQ.correctIndex];
+                          const isCorrect = correctIndexes.includes(originalIdx);
+                          const showResult = showExplanation;
+
+                          let bgColor = 'bg-gray-50 hover:bg-gray-100 border-gray-200';
+                          if (showResult) {
+                            if (isCorrect) bgColor = 'bg-green-100 border-green-400';
+                            else if (isSelected && !isCorrect) bgColor = 'bg-red-100 border-red-400';
+                          } else if (isSelected) {
+                            bgColor = 'bg-blue-100 border-blue-400';
+                          }
+
+                          return (
+                            <button
+                              key={displayIdx}
+                              onClick={() => toggleAnswer(originalIdx)}
+                              className={`w-full text-left p-4 rounded-lg border-2 transition-all ${bgColor}`}
+                            >
+                              <span className="font-medium">{String.fromCharCode(65 + displayIdx)}) </span>
+                              {opt}
+                            </button>
+                          );
+                        })}
+                    </div>
+
+                    {!showExplanation ? (
+                        <button
+                            onClick={submitAnswers}
+                            disabled={selectedAnswers.length === 0}
+                            className="w-full py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 disabled:opacity-50"
+                        >
+                            Submit Answers →
+                        </button>
+                    ) : (
+                        <div className="mt-6 space-y-4">
+                            <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
+                                <h4 className="font-bold text-blue-900 mb-2">📖 Magyarázat:</h4>
+                                <p className="text-gray-800">{currentQ.explanation.hu}</p>
+                            </div>
+
+                            <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded">
+                                <h4 className="font-bold text-green-900 mb-2">✅ Miért helyes:</h4>
+                                <p className="text-gray-800">{currentQ.explanation.whyCorrect}</p>
+                            </div>
+
+                            {currentQ.explanation.whyWrong && (
+                              <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded">
+                                <h4 className="font-bold text-red-900 mb-2">❌ Miért nem a többi:</h4>
+                                <ul className="list-disc list-inside space-y-1 text-gray-800">
+                                  {shuffledOptions.map(({ idx: originalIdx }, displayIdx) => {
+                                    const reason = currentQ.explanation.whyWrong[originalIdx];
+                                    if (!reason) return null;
+                                    return (
+                                      <li key={displayIdx}>
+                                        <strong>{String.fromCharCode(65 + displayIdx)}:</strong> {reason}
+                                      </li>
+                                    );
+                                  })}
+                                </ul>
+                              </div>
+                            )}
+
+                            <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded">
+                                <h4 className="font-bold text-yellow-900 mb-2">💡 Vizsga tipp:</h4>
+                                <p className="text-gray-800">{currentQ.examTip}</p>
+                            </div>
+
+                            <button
+                                onClick={nextQuestion}
+                                className="w-full py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700"
+                            >
+                                {testState.currentQuestion < testState.questions.length - 1 ? 'Next Question →' : 'View Results'}
+                            </button>
+                        </div>
+                    )}
+                </div>
             </div>
-          </div>
         );
-      }
-
-      const q = testState.questions[testState.currentQuestion];
-      const selected = testState.answers[testState.currentQuestion];
-      const progress = ((testState.currentQuestion + 1) / Math.max(1,testState.questions.length)) * 100;
-
-      return (
-        <div className="max-w-3xl mx-auto">
-          <div className="mb-6">
-            <div className="flex justify-between text-sm text-gray-600 mb-2">
-              <span>Question {testState.currentQuestion + 1} of {testState.questions.length}</span>
-              <span>Progress: {Math.round(progress)}%</span>
-            </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
-              <div className="bg-blue-600 h-2 rounded-full transition-all" style={{ width: progress + '%' }} />
-            </div>
-          </div>
-
-          <div className="bg-white rounded-xl shadow-lg p-8 space-y-6">
-            <h3 className="text-xl font-semibold">{q.question}</h3>
-
-            <div className="space-y-3">
-              {q.options.map((opt, idx) => {
-                const isSelected = selected === idx;
-                const isCorrect = idx === q.correctIndex;
-                const showResult = testState.showExplanation;
-
-                let bg = 'bg-gray-50 hover:bg-gray-100 border-gray-200';
-                if (showResult) {
-                  if (isCorrect) bg = 'bg-green-100 border-green-400';
-                  else if (isSelected) bg = 'bg-red-100 border-red-400';
-                }
-
-                return (
-                  <button key={idx} onClick={() => !showResult && onSubmitAnswer(idx)} disabled={showResult}
-                    className={`w-full text-left p-4 rounded-lg border-2 transition-all ${bg}`}>
-                    <span className="font-medium">{String.fromCharCode(65 + idx)}) </span>
-                    {opt}
-                    {showResult && isCorrect && <span className="ml-2">✓</span>}
-                    {showResult && isSelected && !isCorrect && <span className="ml-2">✗</span>}
-                  </button>
-                );
-              })}
-            </div>
-
-            {testState.showExplanation && (
-              <div className="mt-6 space-y-4">
-                {q.explanation?.hu && (
-                  <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
-                    <h4 className="font-bold text-blue-900 mb-2">📖 Magyarázat:</h4>
-                    <p className="text-gray-800">{q.explanation.hu}</p>
-                  </div>
-                )}
-                {q.explanation?.whyCorrect && (
-                  <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded">
-                    <h4 className="font-bold text-green-900 mb-2">✅ Miért helyes:</h4>
-                    <p className="text-gray-800">{q.explanation.whyCorrect}</p>
-                  </div>
-                )}
-                {Array.isArray(q.explanation?.whyWrong) && q.explanation.whyWrong.some(w => w) && (
-                  <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded">
-                    <h4 className="font-bold text-red-900 mb-2">❌ Miért nem a többi:</h4>
-                    <ul className="list-disc list-inside space-y-1 text-gray-800">
-                      {q.explanation.whyWrong.map((reason, idx) => reason && (
-                        <li key={idx}><strong>{String.fromCharCode(65 + idx)}:</strong> {reason}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-                {q.examTip && (
-                  <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded">
-                    <h4 className="font-bold text-yellow-900 mb-2">💡 Vizsga tipp:</h4>
-                    <p className="text-gray-800">{q.examTip}</p>
-                  </div>
-                )}
-                <button onClick={onNextQuestion} className="w-full py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700">
-                  {testState.currentQuestion < testState.questions.length - 1 ? 'Next Question →' : 'View Results'}
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      );
     }
 
     function FlashcardsView({ domain, masteredCards, onToggleMastered, onBack }) {

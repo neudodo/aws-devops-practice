@@ -7,6 +7,32 @@
   "questions": [
     {
       "id": 1,
+      "question": "A CodeBuild project needs to access resources in a private VPC. What must be configured? (Choose 2)",
+      "options": [
+        "VPC configuration in CodeBuild project settings",
+        "NAT Gateway for internet access",
+        "Security groups allowing CodeBuild access",
+        "VPC peering with CodeBuild VPC",
+        "Internet Gateway in the VPC"
+      ],
+      "correctIndexes": [0, 2],
+      "explanation": {
+        "hu": "CodeBuild VPC config: 1) VPC Configuration (VPC, subnets, SGs), 2) Security Groups allow access to private resources. NAT Gateway csak ha internet access kell.",
+        "whyCorrect": "VPC config and security groups are required for private resource access",
+        "whyWrong": [
+          null,
+          "NAT Gateway optional, csak internet access-hez kell",
+          null,
+          "VPC peering nem szükséges, CodeBuild uses ENI",
+          "Internet Gateway nem szükséges private resource access-hez"
+        ]
+      },
+      "examTip": "CodeBuild VPC → VPC config + Security Groups",
+      "difficulty": "Medium",
+      "multipleAnswers": true
+    },
+    {
+      "id": 20,
       "question": "A company needs to implement a CI/CD pipeline that deploys to production only after manual approval. The pipeline should automatically build and test in the development environment. Which AWS services combination best meets this requirement?",
       "options": [
         "CodeCommit, CodeBuild, CodeDeploy with Lambda approval function",
@@ -441,32 +467,6 @@
       },
       "examTip": "Automatic rollback → CodeDeploy + CloudWatch Alarm",
       "difficulty": "Medium"
-    },
-    {
-      "id": 20,
-      "question": "A CodeBuild project needs to access resources in a private VPC. What must be configured? (Choose 2)",
-      "options": [
-        "VPC configuration in CodeBuild project settings",
-        "NAT Gateway for internet access",
-        "Security groups allowing CodeBuild access",
-        "VPC peering with CodeBuild VPC",
-        "Internet Gateway in the VPC"
-      ],
-      "correctIndex": [0, 2],
-      "explanation": {
-        "hu": "CodeBuild VPC config: 1) VPC Configuration (VPC, subnets, SGs), 2) Security Groups allow access to private resources. NAT Gateway csak ha internet access kell.",
-        "whyCorrect": "VPC config and security groups are required for private resource access",
-        "whyWrong": [
-          null,
-          "NAT Gateway optional, csak internet access-hez kell",
-          null,
-          "VPC peering nem szükséges, CodeBuild uses ENI",
-          "Internet Gateway nem szükséges private resource access-hez"
-        ]
-      },
-      "examTip": "CodeBuild VPC → VPC config + Security Groups",
-      "difficulty": "Medium",
-      "multipleAnswers": true
     },
     {
       "id": 21,

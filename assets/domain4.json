@@ -89,7 +89,7 @@
         "Kinesis Data Firehose",
         "SNS"
       ],
-      "correctIndex": [
+      "correctIndexes": [
         0,
         1,
         2
@@ -97,7 +97,8 @@
       "explanation": {
         "hu": "Flow Logs: CWL, S3, Kinesis Firehose"
       },
-      "difficulty": "Easy"
+      "difficulty": "Easy",
+      "multipleAnswers": true
     },
     {
       "id": 7,
