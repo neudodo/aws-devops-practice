@@ -16,8 +16,16 @@
       ],
       "correctIndex": 1,
       "explanation": {
-        "hu": "Service-managed StackSets + Organizations = automatikus menedzsment"
+        "hu": "Service-managed StackSets lehetővé teszi, hogy a CloudFormation sablonokat automatikusan több accountba és régióba telepítsd AWS Organizations segítségével. Az új accountok automatikusan megkapják a stacket, minimális manuális beavatkozással.",
+        "whyCorrect": "A StackSets service-managed opciója a legautomatizáltabb megoldás. Integrálható az AWS Organizations-szel, így új accountok automatikusan megkapják a stackeket emberi beavatkozás nélkül.",
+        "whyWrong": [
+          "A self-managed StackSets manuális IAM role konfigurációt igényel, ami skálázáskor karbantartási terhet okoz.",
+          null,
+          "A CDK deploy script alapú megoldás, ami nem automatikus és nem skálázható 50 accounton keresztül.",
+          "A Terraform manuális account-beállítást igényel, így nem operatív szempontból hatékony."
+        ]
       },
+      "examTip": "Ha a kérdésben szerepel az 'automatically deploy to new accounts' kifejezés, akkor mindig a StackSets service-managed + Organizations kombináció a helyes válasz.",
       "difficulty": "Easy"
     },
     {
@@ -31,8 +39,16 @@
       ],
       "correctIndex": 1,
       "explanation": {
-        "hu": "continue-update-rollback --resources-to-skip"
+        "hu": "Amikor egy erőforrás hiányzik rollback közben, a stack UPDATE_ROLLBACK_FAILED állapotba kerül. A continue-update-rollback parancs lehetővé teszi, hogy a rollback folytatódjon, kihagyva a problémás erőforrásokat.",
+        "whyCorrect": "A continue-update-rollback CLI parancs a hivatalos megoldás az ilyen hibákra. Lehetővé teszi, hogy a rollback befejeződjön anélkül, hogy újra létre kellene hozni a stacket.",
+        "whyWrong": [
+          "A stack törlése és újrateremtése adatvesztéssel járhat, és nem szükséges ilyen helyzetben.",
+          null,
+          "A manuális újraépítés nem oldja meg a CloudFormation belső állapotát.",
+          "Az AWS Support nem tud beavatkozni a stack rollback folyamatába, mivel ez ügyféloldali parancs."
+        ]
       },
+      "examTip": "Ha rollback állapotban ragadt a stack, mindig a continue-update-rollback CLI parancs a megoldás.",
       "difficulty": "Medium"
     },
     {
@@ -46,8 +62,16 @@
       ],
       "correctIndex": 1,
       "explanation": {
-        "hu": "Change sets = preview changes"
+        "hu": "A Change Set megmutatja, milyen erőforrások fognak módosulni, mielőtt a stack frissítése megtörténne. Ez biztonságosabbá teszi a deploymentet.",
+        "whyCorrect": "A Change Set előzetesen kiszámítja a stack frissítés hatásait, így pontosan láthatod, mely erőforrásokat érint a változtatás.",
+        "whyWrong": [
+          "A drift detection az aktuális állapot és a sablon közti eltéréseket mutatja, nem a tervezett változtatásokat.",
+          null,
+          "Az AWS Config csak megfelelőséget ellenőriz, nem előzetes változásokat.",
+          "A Stack Policy tiltásokat határoz meg, nem előzetes változásokat mutat."
+        ]
       },
+      "examTip": "A vizsgán a 'preview changes' vagy 'see what will change' kifejezés mindig a Change Sets funkcióra utal.",
       "difficulty": "Easy"
     },
     {
@@ -61,8 +85,16 @@
       ],
       "correctIndex": 1,
       "explanation": {
-        "hu": "Mappings = region-specific static values"
+        "hu": "A Mappings szekció statikus adatokat kezel, például régiókhoz tartozó értékeket. A FindInMap függvénnyel lekérdezheted ezeket a sablonban.",
+        "whyCorrect": "A Mappings ideális régióspecifikus értékek kezelésére, és a sablon futásidejében automatikusan kiválasztja a megfelelő értéket.",
+        "whyWrong": [
+          "A paraméterek felhasználói bemenetet igényelnek, nem automatizálnak régió-specifikus logikát.",
+          null,
+          "A hardcode megoldás sérti az IaC elveit, mert duplikációt eredményez.",
+          "A Parameter Store inkább dinamikus értékekhez való, nem statikus régió mappinghez."
+        ]
       },
+      "examTip": "A 'region-specific static values' kifejezés mindig a Mappings és FindInMap kombinációt jelzi.",
       "difficulty": "Easy"
     },
     {
@@ -76,8 +108,16 @@
       ],
       "correctIndex": 0,
       "explanation": {
-        "hu": "Drift detection = compare current vs template"
+        "hu": "A CloudFormation drift detection kimutatja, ha a valós infrastruktúra eltér a sablonban definiált állapottól.",
+        "whyCorrect": "A drift detection célja kifejezetten az, hogy feltárja a manuális módosításokat CloudFormation által kezelt erőforrásokon.",
+        "whyWrong": [
+          null,
+          "A manuális összehasonlítás nem méretezhető és hibára hajlamos.",
+          "A CloudTrail megmutatja, ki módosított, de nem az eltérés természetét.",
+          "Az AWS Config csak megfelelőséget vizsgál, nem sablon eltérést."
+        ]
       },
+      "examTip": "A drift szó mindig arra utal, hogy az erőforrás állapota eltér a sablontól – ezért drift detection a válasz.",
       "difficulty": "Easy"
     },
     {
@@ -91,8 +131,16 @@
       ],
       "correctIndex": 1,
       "explanation": {
-        "hu": "Parameter Store Standard = FREE, hierarchical"
+        "hu": "A Parameter Store Standard ingyenes és támogatja a hierarchikus (path-based) paraméterstruktúrát.",
+        "whyCorrect": "A Standard tier Parameter Store alkalmas kulcs-érték alapú, hierarchikus konfigurációk tárolására költségmentesen.",
+        "whyWrong": [
+          "A Secrets Manager drága és felesleges, ha nincs szükség rotációra.",
+          null,
+          "Az Advanced tier fizetős, és csak policy-khoz szükséges.",
+          "A DynamoDB nem konfigurációkezelésre való, és manuális megoldást igényelne."
+        ]
       },
+      "examTip": "A 'least cost' és 'hierarchy' kulcsszavak együtt → Parameter Store Standard tier a helyes válasz.",
       "difficulty": "Easy"
     },
     {
@@ -106,8 +154,16 @@
       ],
       "correctIndex": 0,
       "explanation": {
-        "hu": "Export/ImportValue = cross-stack references"
+        "hu": "Az Outputs → Export értékekkel más stackek ImportValue függvénnyel hozzáférhetnek a kimeneti értékekhez.",
+        "whyCorrect": "Az Export/ImportValue mechanizmus a CloudFormation-ben natív módon biztosít cross-stack adatmegosztást.",
+        "whyWrong": [
+          null,
+          "A Parameter Store nem erre való, és dinamikus változásokat sem kezel jól.",
+          "A nested stack nem biztosít kimeneti exportot önmagában.",
+          "A hardcode megoldás megsérti az IaC újrafelhasználhatóság elvét."
+        ]
       },
+      "examTip": "Ha cross-stack kommunikációról van szó, mindig Export + ImportValue a megoldás.",
       "difficulty": "Easy"
     },
     {
@@ -121,8 +177,16 @@
       ],
       "correctIndex": 1,
       "explanation": {
-        "hu": "SCP = preventive (blocks before creation)"
+        "hu": "Az SCP megakadályozza, hogy bármely IAM entity olyan API hívást végezzen, ami nem titkosított EBS kötetet hozna létre. Ez preventív védelem, nem utólagos javítás.",
+        "whyCorrect": "Az SCP az egyetlen megoldás, ami a CreateVolume API-hívást *megelőzően* blokkolja a hibás konfigurációkat, így teljesen preventív.",
+        "whyWrong": [
+          "Az AWS Config csak utólag jelzi a hibát, nem akadályozza meg.",
+          null,
+          "A CloudFormation Guard csak sablonszinten érvényesít, nem runtime enforcement.",
+          "Az SSM compliance automation csak detektálás után futtat remediációt."
+        ]
       },
+      "examTip": "Preventive policy enforcement → mindig SCP. Config csak detective típusú.",
       "difficulty": "Medium"
     },
     {
@@ -136,8 +200,16 @@
       ],
       "correctIndex": 1,
       "explanation": {
-        "hu": "Resource tags = dynamic targeting"
+        "hu": "Az SSM Automation célpontokat címkék alapján is képes megadni, így dinamikusan kiválaszthatók az érintett példányok.",
+        "whyCorrect": "A tag-alapú targeting lehetővé teszi, hogy új instance-ok automatikusan bekerüljenek a folyamatba, ha megkapják a megfelelő címkét.",
+        "whyWrong": [
+          "A manuális lista nem skálázható és hibalehetőségeket hordoz.",
+          null,
+          "Külön execution indítása 100 példányra felesleges és drága.",
+          "Lambda loop túlkomplikált megoldás, az SSM natívan tudja kezelni a párhuzamosságot."
+        ]
       },
+      "examTip": "Ha a kérdés kulcsszava 'scale', 'many instances' vagy 'dynamic targets', a tag-based targeting a jó megoldás.",
       "difficulty": "Easy"
     },
     {
@@ -151,234 +223,1472 @@
       ],
       "correctIndex": 1,
       "explanation": {
-        "hu": "Config + SSM Automation = native remediation"
+        "hu": "Az AWS Config képes automatikus remediációra, ha egy szabály megsérül, SSM Automation dokumentum használatával. Ez teljesen menedzselt és minimális karbantartást igényel.",
+        "whyCorrect": "A Config szabályhoz csatolt automatikus remediáció natív AWS megoldás, nem igényel külön kódot vagy event routingot.",
+        "whyWrong": [
+          "Az EventBridge + Lambda megoldás több komponensből áll és karbantartásigényes.",
+          null,
+          "A manuális CloudFormation update időigényes és nem automatizált.",
+          "A CloudWatch alarm nem a compliance szintet figyeli, csak metrikákat."
+        ]
       },
+      "examTip": "‘Auto remediation’ és ‘least overhead’ → mindig AWS Config + SSM Automation.",
       "difficulty": "Easy"
     },
     {
       "id": 11,
-      "question": "A CloudFormation stack needs to invoke a third-party API during stack creation. How should this be implemented?",
+      "question": "A CloudFormation stack update failed due to missing IAM permissions for the execution role. What is the BEST practice to prevent this in future?",
       "options": [
-        "Lambda-backed custom resource",
-        "CloudFormation macro",
-        "UserData script in EC2",
-        "This cannot be done"
+        "Use service-managed roles with predefined permissions",
+        "Grant admin permissions to the CloudFormation role",
+        "Validate permissions using CloudFormation Access Analyzer",
+        "Deploy stacks using the root account"
       ],
-      "correctIndex": 0,
+      "correctIndex": 2,
       "explanation": {
-        "hu": "Lambda-backed custom resources extend CloudFormation"
+        "hu": "A CloudFormation Access Analyzer képes előre elemezni, hogy egy adott sablonhoz milyen engedélyek szükségesek, és hiány esetén figyelmeztetést ad. Ez megelőzi a runtime hibákat.",
+        "whyCorrect": "Az Access Analyzer segítségével már a deploy előtt validálható, hogy a CloudFormation execution role minden szükséges engedéllyel rendelkezik.",
+        "whyWrong": [
+          "A service-managed role nem minden sablontípusra elérhető és nem testreszabható.",
+          "Az admin jogosultság adása túl széleskörű és biztonsági kockázatot jelent.",
+          null,
+          "A root account használata rossz gyakorlat, biztonsági kockázatot hordoz."
+        ]
       },
+      "examTip": "‘Missing permissions’ vagy ‘prevent at deploy time’ → CloudFormation Access Analyzer a kulcs.",
       "difficulty": "Medium"
     },
     {
       "id": 12,
-      "question": "StackSets need to deploy to all accounts in Production OU and automatically deploy to new accounts. What configuration is required?",
+      "question": "A DevOps team wants to deploy infrastructure changes across multiple regions in parallel. Which CloudFormation feature should they use?",
       "options": [
-        "Self-managed permissions with manual account list",
-        "Service-managed permissions with OU targets and auto-deployment enabled",
-        "Separate StackSet for each account",
-        "Lambda function to monitor OU"
+        "StackSets with concurrent region operations",
+        "Nested stacks with DependsOn attributes",
+        "Parallel execution via multiple CLI commands",
+        "Service Catalog products"
       ],
-      "correctIndex": 1,
+      "correctIndex": 0,
       "explanation": {
-        "hu": "Service-managed + OU targets + auto-deployment"
+        "hu": "A StackSets funkció képes több régióban és több AWS accountban párhuzamosan deployolni ugyanazt a sablont, jelentősen felgyorsítva a rolloutot.",
+        "whyCorrect": "A StackSets nativ módon támogatja a párhuzamos régiós műveleteket és az automatizált replikációt.",
+        "whyWrong": [
+          null,
+          "A nested stack nem több régióra való, egy adott régióban marad.",
+          "A manuális CLI futtatás nem skálázható és hibás lehet.",
+          "A Service Catalog nem regionális rollout megoldás."
+        ]
       },
+      "examTip": "Ha a kérdésben 'multiple regions' és 'parallel deployment' szerepel → StackSets a válasz.",
       "difficulty": "Medium"
     },
     {
       "id": 13,
-      "question": "AWS CDK application is written in TypeScript. What command generates the CloudFormation template for review?",
+      "question": "A CloudFormation update failed and rolled back, but resources created before rollback were deleted too. How can this be avoided?",
       "options": [
-        "cdk deploy",
-        "cdk synth",
-        "cdk compile",
-        "cdk bootstrap"
+        "Use DeletionPolicy: Retain on critical resources",
+        "Set Stack Policy to Deny delete",
+        "Disable rollback during stack update",
+        "Use DependsOn for all critical resources"
       ],
-      "correctIndex": 1,
+      "correctIndex": 0,
       "explanation": {
-        "hu": "cdk synth = generate template"
+        "hu": "A DeletionPolicy: Retain biztosítja, hogy az adott erőforrás megmaradjon rollback vagy stack delete esetén is. Kritikus erőforrásokra kötelező használni.",
+        "whyCorrect": "A DeletionPolicy: Retain utasítja a CloudFormation-t, hogy ne törölje az erőforrást rollback közben sem.",
+        "whyWrong": [
+          null,
+          "A Stack Policy csak tiltja a módosítást, nem védi a rollback során.",
+          "A rollback kikapcsolása nem ajánlott, mert hibás állapot maradhat.",
+          "A DependsOn nem védi a törléstől, csak sorrendet biztosít."
+        ]
       },
-      "difficulty": "Easy"
+      "examTip": "‘Prevent deletion on rollback’ → mindig DeletionPolicy: Retain a helyes válasz.",
+      "difficulty": "Medium"
     },
     {
       "id": 14,
-      "question": "A CloudFormation stack creates critical RDS database. The database should never be deleted during stack updates. How can this be enforced?",
+      "question": "A CloudFormation template needs to dynamically create resources only when a specific condition is met. Which intrinsic function should be used?",
       "options": [
-        "Use DeletionPolicy: Retain",
-        "Use stack policy denying Delete on database resource",
-        "Enable termination protection on stack",
-        "Both A and B"
+        "Fn::If",
+        "Fn::Equals",
+        "Fn::Condition",
+        "Fn::Select"
       ],
-      "correctIndex": 3,
+      "correctIndex": 0,
       "explanation": {
-        "hu": "DeletionPolicy + Stack Policy = complete protection"
+        "hu": "Az Fn::If függvény lehetővé teszi, hogy erőforrások vagy tulajdonságok feltételesen jöjjenek létre, a megadott feltétel eredménye alapján.",
+        "whyCorrect": "Az Fn::If dinamikusan beilleszti vagy kihagyja az adott resource-ot a stackből a Condition kimenete alapján.",
+        "whyWrong": [
+          null,
+          "Az Fn::Equals csak logikai összehasonlítást végez, nem vezérel létrehozást.",
+          "Fn::Condition nem létezik önálló függvényként.",
+          "Fn::Select tömb elemet választ ki, nem vezérel erőforrást."
+        ]
       },
+      "examTip": "A ‘conditionally create resource’ kifejezés mindig Fn::If-et jelent.",
       "difficulty": "Medium"
     },
     {
       "id": 15,
-      "question": "Parameter Store parameter contains database password. Cost is a concern. Parameters don't need rotation. Which tier should be used?",
+      "question": "During a CloudFormation stack update, a resource requires replacement. What happens to dependent resources?",
       "options": [
-        "Parameter Store Standard (free)",
-        "Parameter Store Advanced",
-        "Secrets Manager",
-        "Store in S3 with encryption"
+        "They are also replaced if they depend on physical ID",
+        "They remain untouched",
+        "They are deleted regardless of dependency",
+        "Update fails automatically"
       ],
       "correctIndex": 0,
       "explanation": {
-        "hu": "Standard tier = FREE, sufficient"
+        "hu": "Ha egy erőforrás fizikai azonosítója megváltozik (pl. új erőforrás jön létre), a függő erőforrások is újraépülnek, hogy az új ID-re mutassanak.",
+        "whyCorrect": "A CloudFormation újraépíti a függő erőforrásokat, ha azok az előző erőforrás ID-jára hivatkoztak.",
+        "whyWrong": [
+          null,
+          "A függőségek mindig követik a fizikai ID-t, ezért nem maradhatnak változatlanul.",
+          "A CloudFormation nem töröl indokolatlanul erőforrásokat.",
+          "A frissítés nem áll meg automatikusan – rollback akkor történik, ha hiba lép fel."
+        ]
       },
-      "difficulty": "Easy"
+      "examTip": "Ha a kérdésben ‘replacement required’ szerepel, gondolj a függő erőforrások újraépítésére is.",
+      "difficulty": "Medium"
     },
     {
       "id": 16,
-      "question": "Multiple CloudFormation stacks have common resources. How should this be organized to promote reusability?",
+      "question": "A developer added new tags to an S3 bucket resource in CloudFormation, but update didn’t apply. Why?",
       "options": [
-        "Copy-paste resources into each stack",
-        "Use nested stacks with reusable templates",
-        "Create separate foundation stack with Exports",
-        "Both B and C are valid approaches"
+        "Tag updates on S3 buckets require recreation",
+        "Tags are immutable once set",
+        "Stack drift detection must be run first",
+        "S3 tags are managed via separate API and not updated by CloudFormation unless explicitly changed"
       ],
       "correctIndex": 3,
       "explanation": {
-        "hu": "Both nested stacks and foundation stacks valid"
+        "hu": "Az S3 tag-ek külön API-n keresztül frissülnek, ezért CloudFormation csak akkor frissíti őket, ha explicit módon a template-ben változás történik az adott mezőben.",
+        "whyCorrect": "Az S3 bucket tagek nem automatikusan frissülnek, CloudFormation explicit változást igényel a template-ben.",
+        "whyWrong": [
+          "A tag update nem igényel új erőforrást, csak explicit módosítást.",
+          "A tagek módosíthatók, nem immutable.",
+          "A drift detection nem szükséges az update-hez.",
+          null
+        ]
       },
+      "examTip": "Ha ‘S3 tags not updating’ a kérdés → mindig gondolj arra, hogy külön API hívás történik.",
       "difficulty": "Medium"
     },
     {
       "id": 17,
-      "question": "Systems Manager Automation needs approval before executing changes in production. Which action type provides built-in approval?",
+      "question": "A team wants to ensure that any CloudFormation stack deployed in production must include specific mandatory tags. How can this be enforced?",
       "options": [
-        "aws:approve",
-        "aws:waitForApproval",
-        "aws:pause",
-        "aws:manualApproval"
+        "Use a Service Control Policy denying CreateStack without required tags",
+        "Use Config rule to check for missing tags",
+        "Use CloudFormation Stack Policy",
+        "Use IAM policy with tag condition"
       ],
       "correctIndex": 0,
       "explanation": {
-        "hu": "aws:approve = built-in approval action"
+        "hu": "Az SCP képes megakadályozni, hogy bármely accountban olyan stack jöjjön létre, ami nem tartalmazza a kötelező tageket. Ez preventív védelem.",
+        "whyCorrect": "Az SCP az egyetlen mechanizmus, amely még a stack létrehozása előtt blokkolja a hibás konfigurációkat.",
+        "whyWrong": [
+          null,
+          "A Config csak utólag detektálja a hibát, nem akadályozza meg.",
+          "A Stack Policy nem alkalmazható létrehozásra, csak frissítésre.",
+          "Az IAM policy csak konkrét API-hívásokat korlátoz, nem globálisan a tageket."
+        ]
       },
-      "difficulty": "Hard"
+      "examTip": "‘Prevent stacks without tags’ → Service Control Policy a helyes válasz.",
+      "difficulty": "Medium"
     },
     {
       "id": 18,
-      "question": "AWS Config should detect when EC2 instances don't have required tags. Which approach is BEST?",
+      "question": "A CloudFormation stack creation takes over 30 minutes and times out. Logs show that one Lambda-backed custom resource never returns a response. What’s the fix?",
       "options": [
-        "Create custom AWS Config rule using Lambda",
-        "Use managed Config rule required-tags",
-        "Use CloudTrail to monitor RunInstances API",
-        "Use EventBridge to check tags"
-      ],
-      "correctIndex": 1,
-      "explanation": {
-        "hu": "Managed Config rule required-tags available"
-      },
-      "difficulty": "Easy"
-    },
-    {
-      "id": 19,
-      "question": "A CloudFormation template needs conditional logic: create NAT Gateway only if Environment parameter is Production. How is this implemented?",
-      "options": [
-        "Use Conditions section with Fn::Equals",
-        "Use Lambda custom resource",
-        "Create two separate templates",
-        "Use Parameters with allowed values"
+        "Ensure the Lambda sends SUCCESS or FAILED to the provided ResponseURL",
+        "Increase the stack timeout",
+        "Enable X-Ray tracing on Lambda",
+        "Add DependsOn to delay the resource creation"
       ],
       "correctIndex": 0,
       "explanation": {
-        "hu": "Conditions section = native conditional logic"
+        "hu": "A Lambda-backed custom resource-nek a CloudFormation által adott ResponseURL-re vissza kell küldenie egy státuszt (SUCCESS/FAILED), különben a stack függőben marad.",
+        "whyCorrect": "A CloudFormation csak akkor folytatja a deploy-t, ha a Lambda visszajelzést küld a response URL-re.",
+        "whyWrong": [
+          null,
+          "A timeout növelése nem oldja meg, csak késlelteti a hibát.",
+          "Az X-Ray nem befolyásolja a CloudFormation kommunikációt.",
+          "A DependsOn csak sorrendet biztosít, nem megoldás a kommunikáció hiányára."
+        ]
       },
+      "examTip": "Ha a kérdésben 'CREATE_IN_PROGRESS forever' vagy 'custom resource' szerepel, mindig a ResponseURL hiánya a hiba.",
+      "difficulty": "Medium"
+    },
+    {
+      "id": 19,
+      "question": "The organization wants to apply consistent CloudFormation best practices validation before deployment. Which AWS service provides this?",
+      "options": [
+        "AWS CloudFormation Guard",
+        "AWS Config",
+        "AWS Trusted Advisor",
+        "AWS Well-Architected Tool"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "A CloudFormation Guard szabályalapú policy engine, amely a sablonok megfelelőségét ellenőrzi még a deploy előtt. Lehetővé teszi a compliance enforcementet.",
+        "whyCorrect": "A CFN Guard segítségével előre érvényesíthetők a sablonok a szervezeti szabályok alapján.",
+        "whyWrong": [
+          null,
+          "Az AWS Config csak a már létrehozott erőforrásokat ellenőrzi.",
+          "A Trusted Advisor nem sablonszintű, hanem account-szintű tanácsokat ad.",
+          "A Well-Architected Tool nem IaC szabályellenőrzésre való."
+        ]
+      },
+      "examTip": "‘Validate templates before deployment’ → mindig CFN Guard a helyes megoldás.",
       "difficulty": "Medium"
     },
     {
       "id": 20,
-      "question": "AWS Config auto-remediation failed 3 times. What happens next?",
+      "question": "A CodeBuild project needs to access resources in a private VPC. What must be configured? (Choose 2)",
       "options": [
-        "Config stops trying and marks as non-compliant",
-        "Config continues indefinitely",
-        "Manual intervention required",
-        "Config sends notification to SNS"
+        "VPC configuration in CodeBuild project settings",
+        "NAT Gateway for internet access",
+        "Security groups allowing CodeBuild access",
+        "VPC peering with CodeBuild VPCE",
+        "Internet Gateway in the VPC"
       ],
-      "correctIndex": 0,
+      "correctIndexes": [
+        0,
+        2
+      ],
       "explanation": {
-        "hu": "After MaximumAutomaticAttempts, Config stops"
+        "hu": "A CodeBuild VPC konfigurációban meg kell adni a subneteket és a security groupokat, hogy a build container elérje a privát erőforrásokat.",
+        "whyCorrect": "A privát eléréshez VPC integrációt és engedélyezett security groupokat kell beállítani. NAT csak akkor szükséges, ha internet is kell.",
+        "whyWrong": [
+          null,
+          "A NAT Gateway csak akkor kell, ha outbound internet access szükséges.",
+          null,
+          "A VPC peering nem szükséges CodeBuild-hez, mivel saját ENI-t hoz létre.",
+          "Az Internet Gateway nem kell privát kommunikációhoz."
+        ]
       },
-      "difficulty": "Medium"
+      "examTip": "Ha a kérdésben 'private VPC' szerepel → mindig VPC config + security group a válasz.",
+      "difficulty": "Medium",
+      "multipleAnswers": true
     },
     {
       "id": 21,
-      "question": "Systems Manager Parameter Store parameter must be accessible only from specific VPC. How should access be restricted?",
+      "question": "A development team needs to reuse standard IAM policies across multiple stacks. What’s the most maintainable approach?",
       "options": [
-        "IAM policy with aws:SourceVpc condition",
-        "Security groups",
-        "VPC endpoint with endpoint policy",
-        "Both A and C"
+        "Use AWS managed policies",
+        "Create custom managed policies and reference them",
+        "Copy inline policies into each template",
+        "Embed JSON policies in Parameters"
       ],
-      "correctIndex": 3,
+      "correctIndex": 1,
       "explanation": {
-        "hu": "VPC endpoint + IAM condition = both needed"
+        "hu": "A custom managed policy referenciák lehetővé teszik a központi IAM policy karbantartást és újrafelhasználást több stack között.",
+        "whyCorrect": "A managed policy referenciák csökkentik a duplikációt és a drift kockázatát.",
+        "whyWrong": [
+          "A managed AWS policy nem testreszabható a szervezet igényei szerint.",
+          null,
+          "Az inline policy duplikált és nehezen kezelhető.",
+          "A paraméterként megadott JSON nem skálázható megoldás."
+        ]
       },
+      "examTip": "Ha a kérdésben 'reuse policy' vagy 'centralized management' szerepel → custom managed policies.",
       "difficulty": "Medium"
     },
     {
       "id": 22,
-      "question": "CloudFormation StackSet needs different configurations per region (AMI IDs vary). How should this be handled?",
+      "question": "A CloudFormation stack deploy fails because an IAM role limit is reached. What’s the best mitigation?",
       "options": [
-        "Use Mappings in template with region-specific values",
-        "Create separate templates per region",
-        "Use Parameters passed per region",
-        "Both A and C are valid"
+        "Use managed policies and reduce inline roles",
+        "Split the stack into smaller ones",
+        "Request service limit increase",
+        "Use IAM role reuse across stacks"
       ],
-      "correctIndex": 3,
+      "correctIndex": 0,
       "explanation": {
-        "hu": "Both Mappings and Parameters valid"
+        "hu": "Ha túl sok IAM szerep jön létre, az inline policy-k helyett managed policy használata jelentősen csökkenti a role számot és javítja a karbantarthatóságot.",
+        "whyCorrect": "A managed policy megosztható több role között, így csökkenthető az IAM limit elérése.",
+        "whyWrong": [
+          null,
+          "A stack bontása komplexitást növel.",
+          "A limit increase időigényes és nem alap megoldás.",
+          "A role reuse sértheti az elválasztás elvét."
+        ]
       },
+      "examTip": "IAM limit issues → always consolidate policies, not stacks.",
       "difficulty": "Medium"
     },
     {
       "id": 23,
-      "question": "A company uses CloudFormation to manage infrastructure. A team member manually changed a security group rule. How can you revert this change?",
+      "question": "A CI/CD pipeline should automatically validate CloudFormation templates before deploy. Which AWS service is best suited?",
       "options": [
-        "Run drift detection then update stack with no changes",
-        "Manually revert the change in console",
-        "Delete and recreate the stack",
-        "CloudFormation automatically reverts drift"
+        "CloudFormation Linter (cfn-lint)",
+        "AWS Config",
+        "Trusted Advisor",
+        "CloudFormation Drift Detection"
       ],
       "correctIndex": 0,
       "explanation": {
-        "hu": "Update stack with same template reverts drift"
+        "hu": "A cfn-lint eszköz automatikusan validálja a sablon szintaxist és logikai hibákat még deploy előtt, így a hibák a pipeline-ban azonnal látszanak.",
+        "whyCorrect": "A cfn-lint az AWS által ajánlott IaC validátor a sablon szintaxis és best practice ellenőrzésére.",
+        "whyWrong": [
+          null,
+          "A Config csak létrehozott erőforrásokat elemez.",
+          "A Trusted Advisor nem sablonszintű.",
+          "A Drift Detection csak létrehozott stackre alkalmazható."
+        ]
       },
+      "examTip": "‘Validate templates before deployment’ → mindig cfn-lint.",
       "difficulty": "Medium"
     },
     {
       "id": 24,
-      "question": "AWS CDK constructs have three levels (L1, L2, L3). Which level provides the highest abstraction?",
+      "question": "An engineer needs to version-control CloudFormation templates and automatically deploy changes after review. What’s the best AWS-native approach?",
       "options": [
-        "L1 (CfnXxx)",
-        "L2 (Xxx)",
-        "L3 (Patterns)",
-        "All levels have same abstraction"
+        "Use CodeCommit + CodePipeline + CloudFormation Deploy action",
+        "Use S3 + Lambda trigger for template changes",
+        "Use CloudFormation Designer auto-deploy",
+        "Use AWS Config to monitor template changes"
       ],
-      "correctIndex": 2,
+      "correctIndex": 0,
       "explanation": {
-        "hu": "L3 Patterns = highest abstraction"
+        "hu": "A CodePipeline integrálható CodeCommit-tel, és a CloudFormation Deploy action segítségével automatizált template deploy valósítható meg verziókezeléssel együtt.",
+        "whyCorrect": "A CodePipeline + CodeCommit teljes AWS-native CI/CD megoldás CloudFormation template-ekhez.",
+        "whyWrong": [
+          null,
+          "Az S3 + Lambda trigger nem kezel verziózást és review-t.",
+          "A Designer nem deployol automatikusan.",
+          "A Config csak detektál, nem deployol."
+        ]
       },
-      "difficulty": "Easy"
+      "examTip": "Ha ‘automatic deploy after code review’ → CodeCommit + CodePipeline.",
+      "difficulty": "Medium"
     },
     {
       "id": 25,
-      "question": "Systems Manager State Manager should ensure specific software is always installed. What is this capability called?",
+      "question": "A CloudFormation template includes sensitive parameters like database passwords. What is the BEST way to secure them?",
       "options": [
-        "Patch Manager",
-        "Session Manager",
-        "State Manager with Association",
-        "Run Command with schedule"
+        "Use the NoEcho property for parameters and reference AWS Secrets Manager",
+        "Store passwords directly in the template with base64 encoding",
+        "Use SSM Parameter Store with plaintext parameters",
+        "Encrypt parameters with KMS manually before deployment"
       ],
-      "correctIndex": 2,
+      "correctIndex": 0,
       "explanation": {
-        "hu": "State Manager with Association = desired state"
+        "hu": "A NoEcho flag megakadályozza, hogy az érzékeny adatok megjelenjenek a CloudFormation konzolon vagy naplókban. A Secrets Manager integráció pedig biztonságos jelszókezelést biztosít a sablonon kívül.",
+        "whyCorrect": "A NoEcho + Secrets Manager kombináció a legbiztonságosabb megoldás, mert a jelszavak nem kerülnek sem a stack outputba, sem a naplóba, és a titkok forgatása automatizálható.",
+        "whyWrong": [
+          null,
+          "A base64 nem titkosítás, az érték könnyen visszafejthető.",
+          "Az SSM plaintext paraméterek naplózhatók, így nem biztonságosak.",
+          "A manuális KMS titkosítás nem integrált CloudFormation megoldás, és bonyolítja a folyamatot."
+        ]
       },
+      "examTip": "Ha a kérdés ‘sensitive data’ vagy ‘password parameter’ → mindig NoEcho + Secrets Manager a helyes válasz.",
       "difficulty": "Medium"
+    },
+    {
+      "id": 26,
+      "question": "A company uses AWS CloudFormation to deploy resources across multiple accounts and Regions. How can they ensure consistent IAM role permissions for each stack instance?",
+      "options": [
+        "Use a StackSet with service-managed permissions via AWS Organizations",
+        "Deploy each stack manually with the same execution role",
+        "Create separate IAM roles in every account and region manually",
+        "Attach policies dynamically with Lambda-backed custom resources"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "A StackSet service-managed permissions módja az AWS Organizations segítségével biztosítja, hogy minden stack ugyanazzal az execution role-lal és engedélyekkel fusson minden accountban és régióban.",
+        "whyCorrect": "A service-managed StackSet engedélyezett fiókokban automatikusan kezeli a role-hozzárendeléseket, így nincs manuális eltérés vagy hibalehetőség.",
+        "whyWrong": [
+          null,
+          "A manuális deploy nem garantál egységes engedélyezést több account esetén.",
+          "A kézi IAM role létrehozás hibalehetőséget hordoz és nem skálázható.",
+          "A custom resource túlkomplikált és nem IAM permission management célra való."
+        ]
+      },
+      "examTip": "Ha a kérdésben több account és régió szerepel → StackSet + service-managed permissions a kulcs.",
+      "difficulty": "Medium"
+    },
+    {
+      "id": 27,
+      "question": "An AWS Config rule is failing because it cannot evaluate certain resources that are recently created. How can this issue be mitigated?",
+      "options": [
+        "Add a retry mechanism or delay in the remediation action via SSM Automation",
+        "Use an EventBridge rule to trigger evaluation later",
+        "Disable the rule temporarily until all resources are created",
+        "Increase the Config recording frequency"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "Ha az erőforrás még nem áll készen, az SSM Automation dokumentumban egy várakozási (wait) lépés beiktatása megakadályozza a hibát és biztosítja, hogy az értékelés csak akkor fusson, ha a resource elérhető.",
+        "whyCorrect": "A `aws:waitForAwsResourceProperty` action megvárja, amíg az erőforrás elérhető, így stabil és megbízható a compliance értékelés.",
+        "whyWrong": [
+          null,
+          "Az EventBridge nem oldja meg a Config belső késleltetését.",
+          "A szabály kikapcsolása elveszi az automatizmus előnyét.",
+          "A recording frequency növelése nem befolyásolja az értékelés időzítését."
+        ]
+      },
+      "examTip": "Ha ‘resource not available’ vagy ‘timeout’ hibát látsz Configban → használj SSM wait lépést.",
+      "difficulty": "Medium"
+    },
+    {
+      "id": 28,
+      "question": "A developer notices that CloudFormation updates fail because of circular dependencies between resources. What is the recommended solution?",
+      "options": [
+        "Use the DependsOn attribute to explicitly control creation order",
+        "Split the template into multiple stacks with exports/imports",
+        "Force a replacement using Change Sets",
+        "Use Stack Policy to skip dependent resources"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "Ha két erőforrás egymásra hivatkozik, a sablont szét kell bontani több stackre, és output-input kapcsolatot kell létrehozni közöttük. Ez megszünteti a körkörös függőséget.",
+        "whyCorrect": "A több stackre bontás moduláris, jól karbantartható megoldás és eltávolítja a körkörös hivatkozásokat.",
+        "whyWrong": [
+          "A DependsOn csak sorrendet állít, de nem szünteti meg a circular dependency-t.",
+          null,
+          "A Change Set nem tudja automatikusan megszüntetni a körkörös függést.",
+          "A Stack Policy nem befolyásolja az erőforrás függőségeket."
+        ]
+      },
+      "examTip": "Circular dependency → mindig bontsd több stackre és használd az export-import mintát.",
+      "difficulty": "Medium"
+    },
+    {
+      "id": 29,
+      "question": "A team wants to automate CloudFormation template validation before deployment. Which solution is BEST?",
+      "options": [
+        "Integrate cfn-lint and CloudFormation Guard (cfn-guard) into the CI/CD pipeline",
+        "Manually review templates before pushing to Git",
+        "Enable rollback on failure in CloudFormation",
+        "Use StackSets to validate the template in a test region"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "A cfn-lint és cfn-guard eszközök képesek automatikusan ellenőrizni a sablonokat, még a deploy előtt. Ezek beépíthetők CodeBuild-be vagy CodePipeline-ba, így hibás sablon nem kerül ki.",
+        "whyCorrect": "A statikus analízis automatizálja a hibák kiszűrését és megfelelőségi szabályokat is érvényesít.",
+        "whyWrong": [
+          null,
+          "A kézi ellenőrzés hibalehetőséges és nem skálázható.",
+          "A rollback csak deploy után lép életbe, nem előtte.",
+          "A StackSet nem validációs eszköz, hanem deploy mechanizmus."
+        ]
+      },
+      "examTip": "Ha ‘validate before deploy’ → mindig cfn-lint + cfn-guard.",
+      "difficulty": "Medium"
+    },
+    {
+      "id": 31,
+      "question": "A CloudFormation stack update replaces an Amazon RDS instance even though no parameter was changed. What is the MOST likely reason?",
+      "options": [
+        "A property marked as 'immutable' changed indirectly through a dependency",
+        "The database snapshot was deleted manually",
+        "The stack was updated using a different template version ID",
+        "The RDS instance drifted from the expected state"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "Bizonyos RDS property-k (pl. instance type, storage type) immutable-nek számítanak. Ha egy kapcsolódó erőforrás (pl. subnet group, security group) frissül, az RDS instance újraépülhet akkor is, ha közvetlenül nem módosult.",
+        "whyCorrect": "Az immutable tulajdonságok bármely közvetett módosítása erőforrás-replacementet vált ki a CloudFormation-ben.",
+        "whyWrong": [
+          null,
+          "A snapshot törlése nem automatikusan váltja ki a replacementet.",
+          "A template verzió nem határozza meg az RDS instance cseréjét.",
+          "A drift nem okoz replacementet, csak eltérést jelez."
+        ]
+      },
+      "examTip": "Ha valami ‘replaced even without change’ → gondolj immutable property-re vagy függőségi változásra.",
+      "difficulty": "Medium"
+    },
+    {
+      "id": 32,
+      "question": "An engineer wants to create reusable CloudFormation building blocks for networking, security, and compute stacks. Which AWS feature should be used?",
+      "options": [
+        "CloudFormation modules",
+        "Nested stacks",
+        "StackSets",
+        "CDK constructs"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "A CloudFormation Modules lehetővé teszi előre definiált, újrahasznosítható komponensek létrehozását, melyek standardizált formában beilleszthetők más sablonokba.",
+        "whyCorrect": "A modulok újrahasznosíthatók, verziózhatók, és segítik a sablon egységesítést vállalati szinten.",
+        "whyWrong": [
+          null,
+          "A nested stack-ek inkább hierarchikus deployra valók, nem újrafelhasználható modulokra.",
+          "A StackSet több régióra és accountra való deployra szolgál, nem moduláris építőkockákra.",
+          "A CDK construct nem CloudFormation feature, hanem fejlesztői szintű absztrakció."
+        ]
+      },
+      "examTip": "Reusable building blocks → CloudFormation Modules.",
+      "difficulty": "Medium"
+    },
+    {
+      "id": 33,
+      "question": "A Config rule should evaluate S3 buckets across multiple accounts for public access. What setup is REQUIRED?",
+      "options": [
+        "Use an AWS Config Aggregator with organization-wide data collection enabled",
+        "Deploy a Config rule manually in each account",
+        "Create a Lambda function that assumes roles into each account",
+        "Use CloudTrail event selectors to capture S3 API calls"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "Az AWS Config Aggregator Organizations integrációval képes több accountból összesített adatot gyűjteni és értékelni, így központi szabály-kiértékelés lehetséges.",
+        "whyCorrect": "A Config Aggregator az egyetlen natív, skálázható megoldás több account auditálására.",
+        "whyWrong": [
+          null,
+          "A manuális deploy nem központosított és nehezen kezelhető.",
+          "A Lambda-szerepalapú megoldás működik, de nem menedzselt és karbantartásigényes.",
+          "A CloudTrail nem Config szabályok értékelésére szolgál."
+        ]
+      },
+      "examTip": "Multi-account compliance → mindig Config Aggregator + Organizations.",
+      "difficulty": "Medium"
+    },
+    {
+      "id": 34,
+      "question": "A CloudFormation template uses dynamic references to Secrets Manager, but deployment fails with 'AccessDeniedException'. What is the cause?",
+      "options": [
+        "The CloudFormation execution role lacks permissions to access the secret",
+        "The secret is stored in a different Region than the stack",
+        "Dynamic references can only be used in nested stacks",
+        "The secret is rotated during the stack deployment"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "A CloudFormation execution role-nak engedéllyel kell rendelkeznie a Secrets Manager erőforráshoz, különben a deploy elutasításra kerül. A hibaüzenet tipikusan AccessDeniedException formájában jelenik meg.",
+        "whyCorrect": "A Secrets Manager secrethez való olvasási jog (secretsmanager:GetSecretValue) szükséges a stack deployhoz.",
+        "whyWrong": [
+          null,
+          "A régióbeli eltérés más hibaüzenetet eredményezne (‘Secret not found’).",
+          "A dinamikus hivatkozások bármilyen stackben használhatók, nem csak nestedben.",
+          "A rotáció ideje nem befolyásolja a referenciát, csak az érték frissülhet."
+        ]
+      },
+      "examTip": "Ha AccessDeniedException Secrets Managerrel → mindig a CF execution role jogosultságait ellenőrizd.",
+      "difficulty": "Medium"
+    },
+    {
+      "id": 35,
+      "question": "A CloudFormation stack continuously enters the ROLLBACK_COMPLETE state after each update attempt. What is the BEST next step?",
+      "options": [
+        "Delete the stack and recreate it with the same template",
+        "Use ContinueUpdateRollback to recover the stack",
+        "Manually edit the stack resources in the console",
+        "Create a Change Set with the same parameters"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "Ha egy stack ROLLBACK_COMPLETE állapotba kerül, a CloudFormation megakadályozza az újabb update-eket. A ContinueUpdateRollback parancs visszaállítja a stacket egy olyan állapotba, ahol az újabb frissítés engedélyezett.",
+        "whyCorrect": "A ContinueUpdateRollback a hivatalos AWS eljárás egy sikertelen frissítés után a stack helyreállítására.",
+        "whyWrong": [
+          "A stack törlése adatvesztéssel járhat és kerülendő.",
+          null,
+          "A manuális erőforrás-szerkesztés CF alatt nem támogatott és inkonzisztenciát okozhat.",
+          "A Change Set nem futtatható ROLLBACK_COMPLETE állapotban."
+        ]
+      },
+      "examTip": "Ha ROLLBACK_COMPLETE → mindig ContinueUpdateRollback a helyes megoldás.",
+      "difficulty": "Medium"
+    },
+    {
+      "id": 36,
+      "question": "A team wants to enforce tagging compliance across all CloudFormation stacks. Which AWS service combination achieves this automatically?",
+      "options": [
+        "AWS Config rule with managed rule 'required-tags' and CloudFormation integration",
+        "CloudWatch alarm monitoring tag compliance metrics",
+        "SSM Automation triggered on untagged resources",
+        "Custom Lambda in CodePipeline to check tags"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "Az AWS Config képes figyelni a CloudFormation által létrehozott erőforrásokat és a 'required-tags' szabály automatikusan jelöli a hiányzó tageket nem megfeleltként.",
+        "whyCorrect": "A Config managed szabály natívan integrálódik a CF által létrehozott erőforrásokkal és folyamatosan értékeli a megfelelést.",
+        "whyWrong": [
+          null,
+          "A CloudWatch nem képes szabályszintű compliance értékelésre.",
+          "Az SSM Automation manuálisan konfigurálandó és nem skálázható tag-ellenőrzéshez.",
+          "A CodePipeline-ba épített Lambda nem való szabályérvényesítésre, csak build-ellenőrzésre."
+        ]
+      },
+      "examTip": "Tag compliance → AWS Config + managed rule 'required-tags'.",
+      "difficulty": "Medium"
+    },
+    {
+      "id": 37,
+      "question": "A CloudFormation template deploy fails because the IAM role specified in the template does not exist yet. How can this be resolved?",
+      "options": [
+        "Use a separate stack to create IAM roles first, then reference them via Outputs",
+        "Add a DependsOn attribute to delay the role creation",
+        "Enable stack rollback to recreate missing roles",
+        "Use StackSets to pre-provision IAM roles"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "Az IAM szerepeket először külön stackben kell létrehozni, majd azokat outputként exportálni és a többi stackben hivatkozni rájuk. Így a függőségek kezelhetők és a CF tudja, mikor használhatók a role-ok.",
+        "whyCorrect": "A több stackre bontás az IAM erőforrások kezelésének bevált gyakorlata, elkerülve a dependency hibákat.",
+        "whyWrong": [
+          null,
+          "A DependsOn nem segít, ha az IAM role teljesen hiányzik.",
+          "A rollback nem oldja meg az IAM dependency-t.",
+          "A StackSet regionális/multi-account célra való, nem dependency kezelésre."
+        ]
+      },
+      "examTip": "Ha IAM role hibát kapsz → mindig gondolj ‘bootstrap stack’-re, ami előre létrehozza őket.",
+      "difficulty": "Medium"
+    },
+    {
+      "id": 38,
+      "question": "An engineer notices that CloudFormation keeps replacing an EC2 instance even when no configuration has changed. What could be the reason?",
+      "options": [
+        "UserData script references dynamic data that changes between updates",
+        "The EC2 AMI ID is hardcoded",
+        "Instance metadata endpoint is disabled",
+        "Termination protection is enabled on the instance"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "Ha az EC2 UserData szkript dinamikus adatokat (pl. timestamp, S3 file URL, paraméter) tartalmaz, a CloudFormation minden frissítéskor új instance-t hoz létre, mert a hash változik.",
+        "whyCorrect": "A UserData bármilyen változása új EC2 instance replacementet vált ki, még ha a tényleges konfiguráció azonos is.",
+        "whyWrong": [
+          null,
+          "A hardcoded AMI ID statikus, nem okoz replacementet, amíg nem módosítják.",
+          "Az instance metadata endpoint tiltása nem befolyásolja a CF update-et.",
+          "A termination protection csak a törlést gátolja, nem okoz replacementet."
+        ]
+      },
+      "examTip": "Ha egy EC2 újraépül minden update-nél → ellenőrizd a UserData tartalmát.",
+      "difficulty": "Medium"
+    },
+    {
+      "id": 39,
+      "question": "A team is migrating CloudFormation templates to AWS CDK. What is one major advantage of CDK over raw CloudFormation?",
+      "options": [
+        "Infrastructure can be defined using familiar programming languages with reusable constructs",
+        "CDK templates deploy faster than CloudFormation templates",
+        "CDK eliminates the need for IAM permissions",
+        "CDK can deploy resources without using CloudFormation backend"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "Az AWS CDK lehetővé teszi az infrastruktúra definiálását programozási nyelveken (TypeScript, Python, Java, stb.) keresztül, ezáltal moduláris, újrafelhasználható és tesztelhető komponenseket biztosít.",
+        "whyCorrect": "A CDK egyik fő előnye a fejlesztői élmény és a kódalapú absztrakciók (constructs) használata.",
+        "whyWrong": [
+          null,
+          "A CDK sem gyorsabb deployban, mert a háttérben CloudFormation-t használ.",
+          "Az IAM jogosultságokra továbbra is szükség van CDK esetén.",
+          "A CDK a CloudFormation API-ját használja a deployhoz, nem alternatív backend-et."
+        ]
+      },
+      "examTip": "Ha a kérdésben ‘reusable, programmatic IaC’ → válasz: CDK.",
+      "difficulty": "Medium"
+    },
+    {
+      "id": 40,
+      "question": "A CloudFormation stack update fails with the error 'Export name already exists in another stack'. What should the DevOps engineer do to resolve this?",
+      "options": [
+        "Rename or remove the conflicting export name in one of the stacks",
+        "Use DependsOn to control export creation order",
+        "Enable stack termination protection",
+        "Use ImportValue with a different key in the template"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "A CloudFormation export nevek globálisan egyediek egy régión belül. Ha két stack ugyanazt az export nevet használja, a frissítés meghiúsul. A megoldás az export nevének módosítása vagy eltávolítása az egyik stackből.",
+        "whyCorrect": "Az export nevek ütközése a leggyakoribb ok az ilyen típusú hibára, és csak névütközés megszüntetésével javítható.",
+        "whyWrong": [
+          null,
+          "A DependsOn nem befolyásolja az export nevek érvényességét.",
+          "A termination protection csak a törlést akadályozza meg, nem oldja meg a hibát.",
+          "Az ImportValue kulcs módosítása nem javítja a forrás export konfliktusát."
+        ]
+      },
+      "examTip": "Export name already exists → mindig módosítsd vagy töröld az ütköző exportot.",
+      "difficulty": "Medium"
+    },
+    {
+      "id": 41,
+      "question": "A Config conformance pack deployment consistently fails in one region. What is the MOST likely root cause?",
+      "options": [
+        "The Config Aggregator does not include that region",
+        "The StackSet execution role in that region lacks permissions",
+        "The conformance pack template exceeds allowed resource count",
+        "Config delivery channel is disabled globally"
+      ],
+      "correctIndex": 1,
+      "explanation": {
+        "hu": "A conformance pack StackSetként települ, és minden régióban saját execution role-t használ. Ha a szerepnek nincs megfelelő engedélye (pl. ssm:*, config:*), a deploy sikertelen lesz csak abban a régióban.",
+        "whyCorrect": "A regionális StackSet execution role hiányos engedélyei a leggyakoribb ok regionális sikertelenségnél.",
+        "whyWrong": [
+          "A Config Aggregator csak gyűjti az adatokat, nem befolyásolja a telepítést.",
+          null,
+          "A resource count limit túllépése globálisan hibát adna, nem csak egy régióban.",
+          "A delivery channel hiánya minden régióra kihatna, nem csak egyre."
+        ]
+      },
+      "examTip": "Ha conformance pack csak egy régióban bukik → nézd meg az execution role engedélyeit ott.",
+      "difficulty": "Medium"
+    },
+    {
+      "id": 42,
+      "question": "An SSM Automation workflow must perform conditional logic based on resource state. Which action type supports branching logic?",
+      "options": [
+        "aws:branch",
+        "aws:choice",
+        "aws:runCommand",
+        "aws:assertAwsResourceProperty"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "Az aws:branch lépés lehetővé teszi, hogy a futási logika különböző ágon haladjon tovább feltételek alapján (pl. ha egy erőforrás compliant vagy nem compliant).",
+        "whyCorrect": "Az aws:branch az SSM Automation egyik legfontosabb vezérlési eleme, feltételes végrehajtásra tervezték.",
+        "whyWrong": [
+          null,
+          "Nincs aws:choice action az SSM-ben, ez félrevezető név.",
+          "Az aws:runCommand csak parancs futtatásra való, nem logikai elágazásra.",
+          "Az aws:assertAwsResourceProperty csak feltétel ellenőrzés, nem ágelágazás."
+        ]
+      },
+      "examTip": "Conditional logic in SSM Automation → aws:branch.",
+      "difficulty": "Medium"
+    },
+    {
+      "id": 43,
+      "question": "A CloudFormation macro transformation fails with 'Invalid request body' error. How can this issue be diagnosed?",
+      "options": [
+        "Check the CloudWatch Logs for the macro’s Lambda function",
+        "Re-run the template using cfn-lint",
+        "Enable drift detection on the macro stack",
+        "Recreate the macro using a different IAM role"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "A CloudFormation macrok Lambda-függvényként futnak, és minden hiba részletesen naplózásra kerül a CloudWatch Logs-ban. Ott található a tényleges hibás input vagy JSON-formátum probléma.",
+        "whyCorrect": "A CloudWatch logban látható a Lambda által visszaadott hiba, ami a diagnosztika alapja.",
+        "whyWrong": [
+          null,
+          "A cfn-lint csak statikus sablonellenőrzést végez, nem futási hibákat keres.",
+          "A drift detection nem releváns a macro sablontranszformációra.",
+          "A macro újralétrehozása nem segít, ha az input JSON hibás."
+        ]
+      },
+      "examTip": "Macro hibák → mindig CloudWatch Logs-ban nézd a Lambda kimenetet.",
+      "difficulty": "Medium"
+    },
+    {
+      "id": 44,
+      "question": "A DevOps team wants to automate rollback if a Config rule remediation fails. Which AWS feature combination should be used?",
+      "options": [
+        "CloudWatch alarm triggering an SNS topic that invokes an SSM Automation rollback document",
+        "Lambda polling the Config compliance results periodically",
+        "Manual rollback action in the AWS Console",
+        "EventBridge rule triggering a CloudFormation rollback event"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "Egy CloudWatch alarm figyelheti a Config compliance hibákat, és SNS-en keresztül elindíthat egy SSM Automation dokumentumot, amely rollback lépéseket hajt végre automatikusan.",
+        "whyCorrect": "A CloudWatch + SNS + SSM kombináció az AWS által javasolt minta automatizált hibakezelésre.",
+        "whyWrong": [
+          null,
+          "A polling megoldás késleltetett és nem skálázható.",
+          "A manuális rollback nem automatizált, nem DevOps-gyakorlat.",
+          "Az EventBridge nem képes közvetlen rollbacket indítani CloudFormation szinten."
+        ]
+      },
+      "examTip": "Automated rollback Config hibák esetén → CloudWatch + SNS + SSM Automation.",
+      "difficulty": "Medium"
+    },
+    {
+      "id": 45,
+      "question": "A CloudFormation StackSet deployment partially succeeds, leaving some accounts in FAILED state. What is the recommended remediation approach?",
+      "options": [
+        "Use the 'Retry failed stacks' option in StackSet operations",
+        "Delete and redeploy the entire StackSet",
+        "Manually create stacks in the failed accounts",
+        "Change the deployment region and rerun the StackSet"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "A StackSet lehetőséget biztosít a csak sikertelen példányok újrafuttatására a 'Retry failed stacks' opcióval. Ez időt takarít meg és megőrzi a sikeres deployokat.",
+        "whyCorrect": "A StackSet 'Retry failed' funkciója a leggyorsabb és legbiztonságosabb mód a hibás régiók újra deployolására.",
+        "whyWrong": [
+          null,
+          "A teljes StackSet újratelepítése felesleges és kockázatos.",
+          "A manuális stack-létrehozás megsérti a StackSet menedzselt állapotát.",
+          "A régióváltás nem javítja a korábbi hibákat, csak új deployt indít máshol."
+        ]
+      },
+      "examTip": "StackSet partial failure → mindig Retry failed stacks.",
+      "difficulty": "Medium"
+    },
+    {
+      "id": 46,
+      "question": "An AWS Config rule triggers before the resource is fully available, causing false noncompliance results. How can this be prevented?",
+      "options": [
+        "Add a 'waitForAwsResourceProperty' step in the SSM Automation document",
+        "Use EventBridge to delay rule evaluation",
+        "Set Config to record resources every 24 hours",
+        "Manually disable remediation for that rule"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "Az SSM Automation dokumentumban a 'aws:waitForAwsResourceProperty' lépés biztosítja, hogy a szabály csak akkor fusson, ha a resource ténylegesen elérhető és stabil állapotban van.",
+        "whyCorrect": "A várakozási lépés megakadályozza, hogy a remediáció korán fusson, megelőzve a false negatívokat.",
+        "whyWrong": [
+          null,
+          "Az EventBridge késleltetés nem garantálja, hogy a resource elérhető.",
+          "A 24 órás felvétel csak snapshot gyakoriságot növel, nem a probléma gyökérét kezeli.",
+          "A remediation kikapcsolása nem megoldás, csak elkerülés."
+        ]
+      },
+      "examTip": "Config remediation időzítés → aws:waitForAwsResourceProperty a megoldás.",
+      "difficulty": "Medium"
+    },
+    {
+      "id": 47,
+      "question": "A DevOps engineer wants to reuse existing infrastructure code between multiple CDK apps. What should be used to achieve this?",
+      "options": [
+        "Create reusable CDK Constructs and publish them as NPM/PyPI packages",
+        "Use nested stacks for all reusable components",
+        "Export stack outputs and import manually between apps",
+        "Copy and paste constructs across repositories"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "A CDK Construct osztályok lehetővé teszik az újrafelhasználható komponensek építését, melyeket akár NPM vagy PyPI csomagként is meg lehet osztani más projektek között.",
+        "whyCorrect": "A CDK Constructs a kód-alapú újrafelhasználhatóság hivatalos eszközei.",
+        "whyWrong": [
+          null,
+          "A nested stack-ek nem alkalmasak több alkalmazás közti újrafelhasználásra.",
+          "Az output-import manuális és hibára hajlamos megközelítés.",
+          "A másolás nem fenntartható és nem verziókövetett."
+        ]
+      },
+      "examTip": "CDK reuse → saját Construct csomagok.",
+      "difficulty": "Medium"
+    },
+    {
+      "id": 48,
+      "question": "A CloudFormation stack deploy fails due to a rate limit error on IAM policy creation. What is the BEST mitigation?",
+      "options": [
+        "Split the stack into multiple smaller stacks or reference managed policies instead of inline policies",
+        "Disable rollback and retry the stack",
+        "Deploy using StackSets in parallel regions",
+        "Batch the IAM policy creation with DependsOn attributes"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "Az IAM API korlátozza a CreatePolicy hívások sebességét. Ha egy stack sok inline policy-t tartalmaz, a throttling miatt bukhat. A megoldás a stack szétbontása vagy managed policy-k használata.",
+        "whyCorrect": "A kisebb stackek vagy managed policy-k csökkentik az IAM API terhelését és elkerülik a throttlingot.",
+        "whyWrong": [
+          null,
+          "A rollback kikapcsolása nem oldja meg az IAM throttling problémát.",
+          "A StackSet régiók közti deployra való, nem a terhelés elosztására.",
+          "A DependsOn nem befolyásolja az IAM API rate limitet."
+        ]
+      },
+      "examTip": "IAM throttling → bontsd szét a policy-kat vagy használd managed policy-kat.",
+      "difficulty": "Medium"
+    },
+    {
+      "id": 49,
+      "question": "A Config aggregator is not showing new AWS accounts added to the organization. What is the most likely reason?",
+      "options": [
+        "The Config recorder is not enabled in the new accounts",
+        "The aggregator is not organization-enabled",
+        "The Config rule is region-specific",
+        "The aggregator's IAM role lacks read permissions"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "Ha az új accountban nincs engedélyezve a Config recorder, akkor az aggregator nem kap adatot tőle, ezért az új fiókok nem jelennek meg az összesített nézetben.",
+        "whyCorrect": "Az aggregator csak azokból az accountokból gyűjt, ahol Config aktív és recorder be van kapcsolva.",
+        "whyWrong": [
+          null,
+          "Ha az aggregator nem organization-enabled, akkor egyik accountot sem látná.",
+          "A Config rule regionális hatóköre nem befolyásolja az aggregator láthatóságát.",
+          "A role hiányos engedélyei más típusú hibát okoznának (‘AccessDenied’)."
+        ]
+      },
+      "examTip": "Új account nem látszik aggregatorban → ellenőrizd, hogy Config recorder aktív-e ott.",
+      "difficulty": "Medium"
+    },
+    {
+      "id": 50,
+      "question": "A CloudFormation stack update fails because one parameter cannot be changed. What is the best practice to handle immutable properties?",
+      "options": [
+        "Use conditional logic in the template to create a replacement resource when needed",
+        "Force replacement using rollback triggers",
+        "Manually delete and recreate the resource",
+        "Convert the property to a parameter reference"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "Ha egy property nem módosítható, érdemes Condition logikával (pl. CreateNewResourceIf paraméter) új erőforrást létrehozni. Így a CloudFormation automatikusan kezeli a cserét, anélkül hogy hibát dobna.",
+        "whyCorrect": "A feltételes resource létrehozás kezelhető módon oldja meg az immutable property problémát.",
+        "whyWrong": [
+          null,
+          "A rollback trigger nem alkalmas erőforrás replacementre.",
+          "A manuális törlés veszélyes és nem automatizált.",
+          "A paraméter referencia nem teszi a property-t módosíthatóvá."
+        ]
+      },
+      "examTip": "Immutable property → használd a Condition + Replacement logikát.",
+      "difficulty": "Medium"
+    },
+    {
+      "id": 51,
+      "question": "A CloudFormation nested stack deployment fails but the parent stack reports CREATE_COMPLETE. Why could this happen?",
+      "options": [
+        "The nested stack uses a different execution role with missing permissions",
+        "The parent stack ignores rollback from nested stacks",
+        "Stack policies block nested updates automatically",
+        "The nested stack is in a different region"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "Ha a nested stack külön execution role-t használ, és abban nincs meg a szükséges jogosultság (pl. IAM vagy S3 műveletekre), a parent stack ettől függetlenül COMPLETE állapotba kerülhet, mert a nested hiba nem globális failure.",
+        "whyCorrect": "A nested stack saját execution role-ján keresztül fut, ami eltérhet a parent stack role-jától.",
+        "whyWrong": [
+          null,
+          "A parent stack rollbacket örököl, de csak globális hiba esetén.",
+          "A Stack Policy nem tiltja automatikusan a nested update-et.",
+          "A nested stack mindig ugyanabban a régióban van, mint a parent."
+        ]
+      },
+      "examTip": "Nested stack issue → mindig ellenőrizd a nested execution role engedélyeit.",
+      "difficulty": "Hard"
+    },
+    {
+      "id": 52,
+      "question": "A CloudFormation StackSet consistently fails to deploy in one region. What is the most reliable troubleshooting approach?",
+      "options": [
+        "Inspect the regional stack instance events for the failed region",
+        "Retry the entire StackSet in all regions",
+        "Enable drift detection on the StackSet",
+        "Switch to manual deployment mode"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "A StackSet regionális stack instance eventjeiben jelennek meg a konkrét hibák (pl. IAM permission vagy resource limit), ezek adják a legpontosabb diagnózist.",
+        "whyCorrect": "A regionális stack event naplók mutatják a valódi hibát, amit a StackSet összesített nézet elrejt.",
+        "whyWrong": [
+          null,
+          "Az újrafuttatás nem oldja meg a hiba okát.",
+          "A drift detection csak konfigurációs eltérést mutat, nem deploy hibát.",
+          "A manual deployment megszünteti az automatizmust és nem ajánlott."
+        ]
+      },
+      "examTip": "StackSet failure → mindig nézd meg az instance events-t az adott régióban.",
+      "difficulty": "Hard"
+    },
+    {
+      "id": 53,
+      "question": "An AWS Config rule remediation fails intermittently because the target resource is not yet available. How can this be mitigated?",
+      "options": [
+        "Add a 'waitForAwsResourceProperty' action step in the remediation SSM document",
+        "Trigger the rule manually after creation",
+        "Extend the Config rule evaluation interval",
+        "Use a Lambda-based remediation handler"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "A 'aws:waitForAwsResourceProperty' lépés biztosítja, hogy a remediáció csak akkor fusson, ha a resource már teljesen elérhető. Ez megakadályozza az időzítési hibákat.",
+        "whyCorrect": "A várakozás (waitFor) megakadályozza a túl korai futást, ami hibát okozna.",
+        "whyWrong": [
+          null,
+          "A manuális indítás nem skálázható megoldás.",
+          "Az értékelési intervallum növelése nem garantálja a resource elérhetőségét.",
+          "A Lambda handler ugyanazt a problémát szenvedné el, ha a resource még nem kész."
+        ]
+      },
+      "examTip": "Config remediation timing → always use aws:waitForAwsResourceProperty.",
+      "difficulty": "Hard"
+    },
+    {
+      "id": 54,
+      "question": "A CDK deploy does not update some resources even though code has changed. What is the most likely cause?",
+      "options": [
+        "The CDK context cache is outdated",
+        "The stack drift detection is disabled",
+        "Termination protection is enabled on the stack",
+        "CDK synth was not executed before deploy"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "A CDK context cache (cdk.context.json) tartalmazhat elavult értékeket, például környezeti lookupokat. Ezek miatt a deploy nem érzékeli a változást.",
+        "whyCorrect": "A CDK context frissítése (`cdk context --clear`) kiküszöböli a cache problémákat.",
+        "whyWrong": [
+          null,
+          "A drift detection nem befolyásolja a deployt.",
+          "A termination protection csak a stack törlését tiltja, nem a frissítést.",
+          "A CDK synth automatikusan fut deploy előtt."
+        ]
+      },
+      "examTip": "CDK nem frissít → töröld a context cache-t.",
+      "difficulty": "Hard"
+    },
+    {
+      "id": 55,
+      "question": "A CloudFormation update order is incorrect and causes dependency errors. How can you enforce the correct creation order?",
+      "options": [
+        "Use the DependsOn attribute in the template",
+        "Use Stack Policies to block early updates",
+        "Add drift detection before each update",
+        "Split resources into different templates"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "A DependsOn attribútum kényszeríti a CloudFormation-t, hogy egy adott erőforrást csak egy másik után hozzon létre vagy frissítsen. Ez biztosítja a helyes sorrendet.",
+        "whyCorrect": "A DependsOn az egyetlen explicit eszköz a függőségi sorrend vezérlésére.",
+        "whyWrong": [
+          null,
+          "A Stack Policy tilt, de nem vezérli a sorrendet.",
+          "A drift detection nem része a deploy sorrendnek.",
+          "A sablon szétbontása nem oldja meg a sorrend-problémát."
+        ]
+      },
+      "examTip": "Resource dependency → always use DependsOn.",
+      "difficulty": "Hard"
+    },
+    {
+      "id": 56,
+      "question": "An AWS Config aggregator does not display data from new accounts. What is the most common cause?",
+      "options": [
+        "Config Recorder is not enabled in the new accounts",
+        "Aggregator IAM role lacks cross-account permissions",
+        "Delivery channel is disabled in the main account",
+        "Organization-level aggregator is not active"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "Az aggregator csak azokból az accountokból gyűjt adatot, ahol a Config Recorder aktív. Ha ez nincs bekapcsolva az új fiókokban, nem látszanak az eredmények.",
+        "whyCorrect": "A Config Recorder hiánya a leggyakoribb ok, hogy egy account kimarad az aggregációból.",
+        "whyWrong": [
+          null,
+          "A cross-account permission hibát külön AccessDenied hiba jelezné.",
+          "A delivery channel hiánya minden accountot érintene.",
+          "Az aggregator Organization módja nem kapcsolódik a Recorder hiányához."
+        ]
+      },
+      "examTip": "Aggregator hiány → mindig ellenőrizd, hogy Config Recorder fut-e.",
+      "difficulty": "Hard"
+    },
+    {
+      "id": 57,
+      "question": "A CloudFormation template includes immutable parameters that frequently need to change. What is the best design approach?",
+      "options": [
+        "Implement replacement logic using Conditions to create new resources",
+        "Use stack policies to allow parameter mutation",
+        "Manually delete and recreate stacks when parameters change",
+        "Override the parameters via the AWS CLI"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "Ha egy paraméter változása új erőforrást igényel, feltételes logikával (Conditions) meg lehet oldani, hogy a CloudFormation újraépítse a resource-t csak akkor, ha szükséges.",
+        "whyCorrect": "A feltételes replacement minimalizálja a kézi beavatkozást és automatizálja a frissítést.",
+        "whyWrong": [
+          null,
+          "A Stack Policy nem tesz paramétert módosíthatóvá.",
+          "A manuális stack kezelés nem skálázható.",
+          "A CLI override nem oldja meg az immutable property korlátot."
+        ]
+      },
+      "examTip": "Immutable paraméterek → Conditions + Replacement logika.",
+      "difficulty": "Hard"
+    },
+    {
+      "id": 58,
+      "question": "After a StackSet deployment, some regional instances show OUTDATED status. What does this indicate?",
+      "options": [
+        "Those stacks are still using an older StackSet template version",
+        "The Config aggregator is delayed",
+        "The drift detection failed",
+        "Stack policy prevented updates"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "Az OUTDATED státusz azt jelenti, hogy az adott stack példány még nem kapta meg az új StackSet sablon verzióját. Ez gyakran akkor fordul elő, ha az update csak részben futott le.",
+        "whyCorrect": "Az OUTDATED jelzi a StackSet és az instance közötti verzióeltérést.",
+        "whyWrong": [
+          null,
+          "Az aggregator késése nem befolyásolja a StackSet státuszt.",
+          "A drift detection külön funkció, nem kapcsolódik a verziókhoz.",
+          "A Stack Policy nem módosítja az OUTDATED státuszt."
+        ]
+      },
+      "examTip": "StackSet OUTDATED → még régi template verzió fut.",
+      "difficulty": "Hard"
+    },
+    {
+      "id": 59,
+      "question": "A Lambda-backed custom CloudFormation resource hangs in CREATE_IN_PROGRESS. What is the probable cause?",
+      "options": [
+        "The Lambda function did not send a SUCCESS/FAILED response to CloudFormation",
+        "The Lambda lacks CloudWatch logging permission",
+        "The stack policy blocks Lambda creation",
+        "The event payload format is incorrect"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "A CloudFormation custom resource addig nem zárul le, amíg a Lambda vissza nem küldi a státuszválaszt (SUCCESS vagy FAILED). Ennek hiánya végtelen függő állapothoz vezet.",
+        "whyCorrect": "A CloudFormation csak explicit visszajelzés után fejezi be a resource műveletet.",
+        "whyWrong": [
+          null,
+          "A log permission hiánya nem blokkolja a CF callbacket.",
+          "A Stack Policy nem hat a Lambda-backed resource-ra.",
+          "A payload hibás formátuma error-t dobna, nem függő állapotot."
+        ]
+      },
+      "examTip": "Custom resource stuck → Lambda nem küldött vissza választ.",
+      "difficulty": "Hard"
+    },
+    {
+      "id": 60,
+      "question": "A CloudFormation macro execution fails at runtime. How can this be investigated?",
+      "options": [
+        "Check the CloudWatch Logs for the macro’s Lambda function output",
+        "Enable verbose mode in cfn-lint",
+        "Run drift detection on the template",
+        "Recreate the macro with a new name"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "A CloudFormation macro a háttérben Lambda függvényként fut, és a futási hibákat CloudWatch Logs-ban naplózza. Innen lehet azonosítani a konkrét hibát.",
+        "whyCorrect": "A CloudWatch log tartalmazza a hibás transzformáció részleteit.",
+        "whyWrong": [
+          null,
+          "A cfn-lint csak szintaktikai ellenőrzést végez, nem futtat makrót.",
+          "A drift detection nem releváns makrók esetén.",
+          "A macro újralétrehozása nem deríti ki a hiba okát."
+        ]
+      },
+      "examTip": "Macro runtime error → nézd a CloudWatch logokat.",
+      "difficulty": "Hard"
+    },
+    {
+      "id": 61,
+      "question": "During a CDK pipeline deployment, a cfn-nag rule violation stops the update. How should this be handled?",
+      "options": [
+        "Fix the template or add rule suppression where justified",
+        "Disable the linting stage in the pipeline",
+        "Ignore the warning and redeploy manually",
+        "Modify the CloudFormation stack policy"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "A cfn-nag a biztonsági szabályok megsértését jelzi (pl. túl engedékeny IAM policy). A helyes megoldás a sablon javítása vagy a szabály indokolt elnyomása (suppression).",
+        "whyCorrect": "A szabály megsértését vagy javítani, vagy dokumentáltan suppresselni kell – ez a DevSecOps alapelv.",
+        "whyWrong": [
+          null,
+          "A lint kikapcsolása megszünteti a minőségellenőrzést.",
+          "A manuális újratelepítés megkerüli a biztonsági ellenőrzést.",
+          "A Stack Policy nem oldja meg a cfn-nag hibát."
+        ]
+      },
+      "examTip": "cfn-nag violation → fixeld vagy suppresseld, soha ne ignoráld.",
+      "difficulty": "Hard"
+    },
+    {
+      "id": 62,
+      "question": "A Config conformance pack fails to update in multiple accounts. What should be done to propagate the new version?",
+      "options": [
+        "Run a StackSet update operation with the new template version",
+        "Recreate all Config rules manually",
+        "Modify the Config aggregator settings",
+        "Enable drift detection for all conformance packs"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "A conformance pack valójában CloudFormation StackSet-en keresztül települ. A frissítést StackSet update művelettel lehet szinkronizálni az összes accountban.",
+        "whyCorrect": "A StackSet update az egyetlen támogatott mód a conformance pack verziófrissítésére több accountban.",
+        "whyWrong": [
+          null,
+          "A manuális újralétrehozás lassú és hibalehetőségekkel teli.",
+          "Az aggregator csak adatot gyűjt, nem deployol.",
+          "A drift detection nem frissít sablont."
+        ]
+      },
+      "examTip": "Conformance pack frissítés → StackSet update az új sablonnal.",
+      "difficulty": "Hard"
+    },
+    {
+      "id": 63,
+      "question": "An SSM Automation workflow must execute different branches based on multiple conditions. Which action enables this?",
+      "options": [
+        "aws:branch",
+        "aws:choice",
+        "aws:approve",
+        "aws:runCommand"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "Az 'aws:branch' action segítségével az SSM Automation több feltétel alapján különböző ágakon haladhat tovább, például ha egy resource compliant vagy noncompliant.",
+        "whyCorrect": "Az aws:branch az SSM Automation fő vezérlési eszköze többágú logika megvalósítására.",
+        "whyWrong": [
+          null,
+          "Nincs aws:choice akció az SSM-ben, ez téves elnevezés.",
+          "Az aws:approve jóváhagyást kezel, nem feltételes ágat.",
+          "Az aws:runCommand csak parancs futtatásra szolgál."
+        ]
+      },
+      "examTip": "Feltételes SSM workflow → aws:branch a megoldás.",
+      "difficulty": "Hard"
+    },
+    {
+      "id": 64,
+      "question": "A production CloudFormation stacks must be protected from accidental deletion. What combination of settings provides full protection?",
+      "options": [
+        "Enable termination protection, apply a Stack Policy with Delete:Deny, and use DeletionPolicy:Retain",
+        "Only enable termination protection",
+        "Use DeletionPolicy: Snapshot on all resources",
+        "Manually restrict user IAM permissions"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "A teljes védelemhez három szint szükséges: termination protection (stack törlés elleni), Stack Policy (bizonyos resource műveletek tiltása) és DeletionPolicy:Retain (erőforrás megőrzés).",
+        "whyCorrect": "A három funkció kombinálva biztosítja, hogy véletlen törlés ne okozzon adatvesztést.",
+        "whyWrong": [
+          null,
+          "Ez csak a stack törlését tiltja, de az erőforrásokat nem.",
+          "A Snapshot csak bizonyos resource típusokra működik.",
+          "Az IAM korlátozás nem véd minden deploy esetet."
+        ]
+      },
+      "examTip": "Prod stack védelem → Termination + StackPolicy + Retain.",
+      "difficulty": "Hard"
+    },
+    {
+      "id": 65,
+      "question": "A StackSet drift detection reports false positives. What could be causing this?",
+      "options": [
+        "Manual tag changes on resources",
+        "Drift detection API throttling",
+        "Stack policy blocking tag updates",
+        "StackSet permission model mismatch"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "A drift detection a címkéket is figyeli, így ha manuálisan módosítanak tageket, azt driftként érzékeli, még ha az infrastruktúra nem is változott lényegesen.",
+        "whyCorrect": "A manuális tag módosítás tipikus hamis pozitív driftet okoz.",
+        "whyWrong": [
+          null,
+          "A throttling csak késleltetést, nem hibás driftet okoz.",
+          "A Stack Policy nem befolyásolja a drift ellenőrzést.",
+          "A permission model eltérés más hibát adna (AccessDenied)."
+        ]
+      },
+      "examTip": "Hamis drift → manuális tagváltozás az oka.",
+      "difficulty": "Hard"
+    },
+    {
+      "id": 66,
+      "question": "A custom Config rule's Lambda function times out. How can performance be optimized?",
+      "options": [
+        "Convert it to an event-based rule and increase timeout as needed",
+        "Run evaluations less frequently",
+        "Use a larger Lambda memory setting",
+        "Disable the rule temporarily"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "Az event-based szabályok csak akkor futnak, ha változás történik, így gyorsabbak és kevésbé időigényesek. A timeout növelése segíthet a stabilitásban.",
+        "whyCorrect": "Az event-based modell hatékonyabb és kevesebb CPU-időt igényel.",
+        "whyWrong": [
+          null,
+          "A ritkább futtatás csak késleltet, nem optimalizál.",
+          "A memória növelése nem mindig oldja meg az időzítési hibát.",
+          "A szabály kikapcsolása nem valódi megoldás."
+        ]
+      },
+      "examTip": "Config rule timeout → állítsd event-basedre + növeld timeoutot.",
+      "difficulty": "Hard"
+    },
+    {
+      "id": 67,
+      "question": "A CloudFormation stack outputs are not updating after changes. Why?",
+      "options": [
+        "The stack is in ROLLBACK_COMPLETE state",
+        "Outputs are immutable properties",
+        "Stack drift detection disabled",
+        "Outputs depend on deleted resources"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "Rollback állapotban a CloudFormation nem frissíti az outputokat, mivel a stack nem érvényes működési állapotban van.",
+        "whyCorrect": "A rollback megakadályozza az output értékek frissítését.",
+        "whyWrong": [
+          null,
+          "Az output értékek nem immutable típusúak.",
+          "A drift detection nem befolyásolja az outputokat.",
+          "A törölt resource hibát, nem frissítés elmaradást okozna."
+        ]
+      },
+      "examTip": "Output nem frissül → rollback állapotban van a stack.",
+      "difficulty": "Hard"
+    },
+    {
+      "id": 68,
+      "question": "A StackSet shows some stacks in OUTDATED state. What does this indicate?",
+      "options": [
+        "Those stacks have not yet received the latest template version",
+        "The Config aggregator has stale data",
+        "Drift detection failed mid-run",
+        "Stack policy blocked update"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "Az OUTDATED státusz azt jelzi, hogy az adott StackSet példány még nem frissült az új template verzióval – a StackSet szinkronizáció még folyamatban van.",
+        "whyCorrect": "Az OUTDATED státusz mindig verzió eltérésre utal, nem hibára.",
+        "whyWrong": [
+          null,
+          "Az aggregator nincs hatással StackSet státuszra.",
+          "A drift detection hibája más státuszt eredményezne.",
+          "A Stack Policy nem módosítja a verzió állapotát."
+        ]
+      },
+      "examTip": "OUTDATED = a stack még régi template verziót használ.",
+      "difficulty": "Hard"
+    },
+    {
+      "id": 69,
+      "question": "A Config rule has no remediation action defined. What happens to noncompliant resources?",
+      "options": [
+        "They remain NON_COMPLIANT until manually remediated",
+        "They are automatically remediated by default",
+        "They become COMPLIANT after 24 hours",
+        "They are deleted automatically"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "Ha nincs remediation definiálva, a Config csak megjelöli a szabályt megszegő erőforrásokat, de nem hajt végre javítást.",
+        "whyCorrect": "A remediation hiányában a megfelelőség manuális beavatkozást igényel.",
+        "whyWrong": [
+          null,
+          "Nincs automatikus javítás, ha nincs SSM dokumentum.",
+          "Az újraértékelés nem változtat státuszt automatikusan.",
+          "A Config soha nem töröl resource-okat."
+        ]
+      },
+      "examTip": "Nincs remediation → csak jelzi a NON_COMPLIANT állapotot.",
+      "difficulty": "Hard"
+    },
+    {
+      "id": 70,
+      "question": "An SSM document update does not reflect in other regions. Why?",
+      "options": [
+        "SSM documents are regional resources",
+        "The Config aggregator is not synchronized",
+        "The StackSet has pending updates",
+        "SSM parameter store replication is disabled"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "Az SSM dokumentumok regionális szinten tárolódnak, tehát minden régióban külön kell frissíteni őket, ha több régióban használják.",
+        "whyCorrect": "Az SSM dokumentum nem globális, hanem régiónként kezelendő.",
+        "whyWrong": [
+          null,
+          "Az aggregator csak Config adatokra vonatkozik.",
+          "A StackSet a CloudFormation része, nem SSM-é.",
+          "Az SSM parameter replication más szolgáltatás, nem dokumentumra vonatkozik."
+        ]
+      },
+      "examTip": "SSM dokumentum update → régiónként külön kell deployolni.",
+      "difficulty": "Hard"
+    },
+    {
+      "id": 71,
+      "question": "An AppConfig deployment automatically rolls back after launch. What could have triggered this?",
+      "options": [
+        "A CloudWatch alarm threshold was breached",
+        "The deployment strategy type was Linear",
+        "The AppConfig validator failed to run",
+        "The SSM Automation document was missing"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "Az AppConfig rollback automatikusan aktiválódik, ha a hozzá kapcsolt CloudWatch alarm hibát jelez, például ha a metrikák thresholdját átlépi.",
+        "whyCorrect": "A CloudWatch alarm triggereli az AppConfig automatikus rollbacket.",
+        "whyWrong": [
+          null,
+          "A Linear stratégia nem okoz rollbacket, csak fokozatos rolloutot.",
+          "A validator hiánya nem vált rollbacket, csak warningot.",
+          "Az SSM dokumentum nem szükséges az AppConfig deployhoz."
+        ]
+      },
+      "examTip": "AppConfig rollback = CloudWatch alarm threshold átlépés.",
+      "difficulty": "Hard"
+    },
+    {
+      "id": 72,
+      "question": "A CloudFormation drift detection is extremely slow for large stacks. How can it be optimized?",
+      "options": [
+        "Break large stacks into smaller modular stacks",
+        "Increase CloudFormation API quota",
+        "Use parallel drift detection via multiple roles",
+        "Run drift detection only on outputs"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "A drift detection minden resource-ot külön ellenőriz. Ha a stack túl nagy, érdemes kisebb, moduláris stackekre bontani a gyorsabb vizsgálatért.",
+        "whyCorrect": "A moduláris stackek párhuzamosan ellenőrizhetők, így gyorsabb.",
+        "whyWrong": [
+          null,
+          "Az API kvóta nem gyorsítja az ellenőrzést.",
+          "A drift detection nem párhuzamosítható role-okkal.",
+          "Az outputokra korlátozás nem támogatott."
+        ]
+      },
+      "examTip": "Drift detection lassú? → bontsd moduláris stackekre.",
+      "difficulty": "Hard"
+    },
+    {
+      "id": 73,
+      "question": "A CDK app requires different IAM policies per environment. What is the best approach?",
+      "options": [
+        "Use CDK context variables and Conditions to adjust policy definitions",
+        "Create separate CDK apps for each environment",
+        "Attach policies manually post-deploy",
+        "Use environment variables in Lambda instead"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "A CDK context és Conditions segítségével környezet-specifikus konfigurációt lehet kezelni egyetlen alkalmazásban, kódduplikáció nélkül.",
+        "whyCorrect": "A CDK context az ajánlott módszer környezeti különbségek kezelésére.",
+        "whyWrong": [
+          null,
+          "Külön app fenntartása redundáns és nehezen karbantartható.",
+          "A manuális policy hozzáadás megszegi az IaC elvet.",
+          "A Lambda environment variable nem IAM policy célra való."
+        ]
+      },
+      "examTip": "CDK multi-env → context + Conditions.",
+      "difficulty": "Hard"
+    },
+    {
+      "id": 74,
+      "question": "A CloudFormation stack with many IAM policies fails due to API throttling. How should this be mitigated?",
+      "options": [
+        "Split the stack or reference IAM managed policies instead of inline ones",
+        "Disable rollback and retry the deployment",
+        "Deploy using StackSets in multiple regions",
+        "Batch policy creation using DependsOn"
+      ],
+      "correctIndex": 0,
+      "explanation": {
+        "hu": "Az IAM API limitálja a CreatePolicy hívásokat. Ha sok inline policy van, a throttling hibát okoz. A megoldás: több stack vagy managed policy használata.",
+        "whyCorrect": "A kisebb stackek és managed policy-k csökkentik az IAM API terhelést.",
+        "whyWrong": [
+          null,
+          "A rollback kikapcsolása nem javítja a throttling okát.",
+          "A StackSet nem oldja meg a régión belüli API limitet.",
+          "A DependsOn nem befolyásolja az IAM API rate limitet."
+        ]
+      },
+      "examTip": "IAM throttling → használd managed policy-kat vagy több stack-et.",
+      "difficulty": "Hard"
     }
   ],
   "flashcards": [

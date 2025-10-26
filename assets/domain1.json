@@ -582,6 +582,976 @@
       },
       "examTip": "ECR authentication → IAM role",
       "difficulty": "Easy"
+    },
+    {
+        "id": 26,
+        "question": "Your team wants to enforce that no code is merged into main without at least 80% unit test coverage and passing static code analysis. What is the BEST way to enforce this in a CI pipeline?",
+        "options": [
+        "Require developers to manually check coverage and analysis before merge.",
+        "Configure pull request checks in GitHub to block merge unless CodeBuild job passes with coverage report and static analysis results.",
+        "Use post-merge webhook to fail build later if coverage is too low.",
+        "Use CodePipeline to perform builds after merge and manually revert commit if tests fail."
+        ],
+        "correctIndex": 1,
+        "explanation": {
+        "hu": "Pull request merge előtti automatikus ellenőrzés biztosítja, hogy csak megfelelő minőségű kód kerüljön be a main ágba.",
+        "whyCorrect": "Automatikus PR check + build job = integrált minőség-ellenőrzés",
+        "whyWrong": [
+            "Manuális ellenőrzés = emberi hibára hajlamos",
+            "Post-merge = már bekerült hibás kód lehet",
+            "Manual revert = késleltetett visszahívás"
+        ]
+        },
+        "examTip": "Merge only after build + coverage + analysis pass",
+        "difficulty": "Medium"
+    },
+    {
+        "id": 27,
+        "question": "During the pipeline build, your CodeBuild job downloads dependencies, compiles code and packages the artifact. You notice the dependency download step takes too long. Which caching option gives the BEST acceleration?",
+        "options": [
+        "S3 cache with full dependency folder",
+        "CodeBuild local cache for source only",
+        "CodeBuild local cache for Docker layer caching",
+        "Disable dependency download and rely on developer machines"
+        ],
+        "correctIndex": 2,
+        "explanation": {
+        "hu": "Docker layer cache (LOCAL cache type DOCKER_LAYER) jelentősen gyorsítja a build-időt, ha Docker képet építesz. Ha csak natív app, akkor S3 lehet, de Docker esetén a layer cache a legjobb.",
+        "whyCorrect": "Docker layer cache = build time csökkentése",
+        "whyWrong": [
+            "S3 cache nem optimalizál Docker layer-re",
+            "Source only cache nem oldja meg a dependency letöltést teljesen",
+            "Kizárás nem megoldás"
+        ]
+        },
+        "examTip": "Docker build speed → use local DOCKER_LAYER cache",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 28,
+        "question": "Your CD pipeline deploys to staging then production. The operations team wants to delay production deployment until the first week of a release month. How do you implement schedule gating in the pipeline?",
+        "options": [
+        "Manually start production stage when ready.",
+        "Use EventBridge rule to trigger pipeline only during first week, then automatic stages proceed.",
+        "Use CodePipeline schedule action in pipeline JSON to run only during first week.",
+        "Add conditional Lambda check at production stage to skip if not first week."
+        ],
+        "correctIndex": 1,
+        "explanation": {
+        "hu": "EventBridge rule schedule → csak adott időszakban indítod a pipeline-t, így a production deploy automatikusan ekkor lehetséges.",
+        "whyCorrect": "Automatizált időzítés minimális manuális beavatkozással",
+        "whyWrong": [
+            "Manuális indítás = operatív overhead",
+            "CodePipeline nem rendelkezik natív schedule action-nel (EventBridge-vel kombináció szükséges)",
+            "Lambda conditional = felesleges komplex"
+        ]
+        },
+        "examTip": "Scheduled deploy → EventBridge rule triggers pipeline",
+        "difficulty": "Medium"
+    },
+    {
+        "id": 29,
+        "question": "Your build produces a Docker image tagged with semantic versioning and a unique build number. You need to ensure that the same image is used through dev, staging and production environments without rebuilds. How should the pipeline be structured?",
+        "options": [
+        "Rebuild image in each environment with same tag.",
+        "Build once, push image to ECR with digest, pass digest as parameter through pipeline and deploy identical image.",
+        "Build and tag image ‘latest’, deploy to each environment and rely on approved checks.",
+        "Store image outside AWS and deploy manually."
+        ],
+        "correctIndex": 1,
+        "explanation": {
+        "hu": "Azonos image (digest) minden környezetben biztosítja a reproducibilitást és azt, hogy amit teszteltek, az kerül produkcióba.",
+        "whyCorrect": "Build once, promote artifact across environments is best practice",
+        "whyWrong": [
+            "Rebuild = variancia",
+            "Latest tag = nem deterministic",
+            "Manual deploy = nem automatizált"
+        ]
+        },
+        "examTip": "Promote same image → build once, pass digest",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 30,
+        "question": "Your pipeline uses AWS CodePipeline and CodeBuild. There is a requirement that each pipeline execution must output a compliance report stored in S3 with encryption, and you need to track pipeline executions. Which additional configuration should you enable?",
+        "options": [
+        "Enable CloudTrail data events for S3 and CodePipeline.",
+        "Enable pipeline notifications via SNS only.",
+        "Store reports locally on build host.",
+        "Use CloudWatch logs alone."
+        ],
+        "correctIndex": 0,
+        "explanation": {
+        "hu": "CloudTrail data-events for S3 + CodePipeline track every execution and storage event, megfelel a compliance követelményeknek.",
+        "whyCorrect": "Audit trail + encrypted S3 = compliance",
+        "whyWrong": [
+            "SNS nem audit trail",
+            "Local storage nem megfelel enterprise compliance-nak",
+            "CloudWatch logs ≠ teljes audit trail"
+        ]
+        },
+        "examTip": "Compliance → CloudTrail data events + encrypted S3",
+        "difficulty": "Medium"
+    },
+    {
+        "id": 31,
+        "question": "In your SDLC pipeline, you want to perform a smoke test automatically after deployment to production and roll back the deployment if the smoke test fails. Which service and method should you use for the smoke test?",
+        "options": [
+        "Use AWS Lambda invoked in CodePipeline as an action to run smoke test, then trigger rollback if failure.",
+        "Use manual test by operations team after deployment.",
+        "Add smoke test step within CodeBuild to run after deploy stage.",
+        "Ignore smoke test and rely on monitoring alerts."
+        ],
+        "correctIndex": 0,
+        "explanation": {
+        "hu": "Lambda action a pipeline-ban lehetővé teszi automatizált smoke testet és rollback-et, minimális manuális lépés.",
+        "whyCorrect": "Automated smoke test action in pipeline = best practice",
+        "whyWrong": [
+            "Manual test = lassú",
+            "Build phase után deploy-on kívül rossz helyen",
+            "Monitoring alerts delayed"
+        ]
+        },
+        "examTip": "Smoke test → Lambda action in pipeline",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 32,
+        "question": "A development team commits infrastructure code frequently. They also want the pipeline to enforce cost-optimization best practices (e.g., no EC2 t2.large in production). Which tool should be integrated into the pipeline?",
+        "options": [
+        "AWS Config rules only.",
+        "CloudFormation drift detection only.",
+        "AWS CloudFormation Guard (cfn-guard) or AWS Config + policy as code integrated in pipeline.",
+        "Manual review of Terraform code."
+        ],
+        "correctIndex": 2,
+        "explanation": {
+        "hu": "Policy as code (cfn-guard) vagy AWS Config + pipeline integráció biztosítja, hogy infra-code megfeleljen a cost-opt követelményeknek automatizáltan.",
+        "whyCorrect": "Automated policy-as-code integration best practice",
+        "whyWrong": [
+            "AWS Config alone = post-deploy drift only",
+            "Drift detection = után-ellenőrzés, nem pre-deploy",
+            "Manual review = kockázatos"
+        ]
+        },
+        "examTip": "Cost-optimization infra code → policy as code",
+        "difficulty": "Medium"
+    },
+    {
+        "id": 33,
+        "question": "You have a monorepo with multiple microservices and want to trigger builds only for services affected by a commit. Which approach will you implement?",
+        "options": [
+        "Trigger build for all services on every commit.",
+        "Use code ownership files to manually list impacted services.",
+        "Use dependency graph tooling (e.g., AWS CodeCatalyst or open-source) to determine impacted services and trigger only those builds.",
+        "Schedule nightly full builds and avoid per-commit builds."
+        ],
+        "correctIndex": 2,
+        "explanation": {
+        "hu": "Dependency graph tooling az érintett szolgáltatásokat automatikusan detektálja, csökkenti a build-időt és erőforrás-felhasználást.",
+        "whyCorrect": "Dynamic impact detection = efficient CI",
+        "whyWrong": [
+            "Build all = túl sok idő",
+            "Manual code-ownership list = hibára hajlamos",
+            "Nightly full build = nem per-commit"
+        ]
+        },
+        "examTip": "Monorepo impact → dependency graph trigger builds",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 34,
+        "question": "Your pipeline deploys to production using Blue/Green strategy but you want to ensure the old environment is retained for at least 24 hours before final cutover. What change should you make?",
+        "options": [
+        "Delete Blue environment immediately after Green becomes healthy.",
+        "Configure CodeDeploy with termination delay of old environment for 24 hours.",
+        "Switch to AllAtOnce deployment.",
+        "Manually perform cut-over after 24 hours."
+        ],
+        "correctIndex": 1,
+        "explanation": {
+        "hu": "CodeDeploy terminationDelay parameter lehetővé teszi, hogy az eredeti környezet 24 óráig elérhető maradjon rollback-hez vagy gyors switch-hez.",
+        "whyCorrect": "Native parameter a Blue/Green deploy-ban",
+        "whyWrong": [
+            "Azonnali törlés = nincs rollback ablak",
+            "AllAtOnce = nem Blue/Green stratégia",
+            "Manuálisan = nem automatizált"
+        ]
+        },
+        "examTip": "Blue/Green → retention of old environment for recovery",
+        "difficulty": "Medium"
+    },
+    {
+        "id": 35,
+        "question": "In a CI/CD pipeline using CodePipeline, you want to avoid pipeline flapping (rapid success/failure cycles) when external APIs are down temporarily. Which mechanism should be introduced?",
+        "options": [
+        "Ignore the failures and continue.",
+        "Use Lambda retry logic within pipeline steps.",
+        "Use CodePipeline action retry configuration (retry count and backoff) and adjust timeout to absorb transient failures.",
+        "Switch to manual pipeline triggers only."
+        ],
+        "correctIndex": 2,
+        "explanation": {
+        "hu": "CodePipeline action configuration támogatja retryMode és numberOfRetries paramétereket, amelyek segítenek elnyelni átmeneti hibákat és stabilabb pipeline-t eredményeznek.",
+        "whyCorrect": "Native retry + backoff összehangolt megoldás",
+        "whyWrong": [
+            "Ignore = nem kezel hibát",
+            "Lambda retry = felesleges komplex",
+            "Manuális trigger = csökkenti automatizálást"
+        ]
+        },
+        "examTip": "Pipeline stability → action retry config",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 36,
+        "question": "Your team is deploying infrastructure using Terraform and wants to ensure that any change to production infrastructure can be rolled back safely. What is the BEST practice to enable this?",
+        "options": [
+        "Allow direct terraform apply to production branch without review",
+        "Use Terraform Cloud with versioned workspaces and state versioning enabled, and trigger rollback by selecting previous workspace version",
+        "Store state file locally and backup daily",
+        "Use manual change control board for production changes only"
+        ],
+        "correctIndex": 1,
+        "explanation": {
+        "hu": "Terraform Cloud workspaces állapot-verziózással és rollback lehetőséggel biztosítja, hogy az élő infrastruktúrát vissza lehessen állítani korábbi állapotra.",
+        "whyCorrect": "Automatizált state versioning + rollback támogatás a legjobb gyakorlat",
+        "whyWrong": [
+            "Közvetlen apply = nincs review, kockázatos",
+            "Helyi backup = nem automatizált és skálázható",
+            "Manual change control board = operatív overhead"
+        ]
+        },
+        "examTip": "Infra as code rollback → Terraform Cloud + state versioning",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 37,
+        "question": "A microservices alkalmazás CI pipeline-ja tartalmaz build, test és deploy lépéseket. A csapat most bevezeti a feature-flag-et és dark-launch-t, hogy funkciókat fokozatosan engedélyezzenek. Milyen változtatást javasolsz a pipeline-ban?",
+        "options": [
+        "Deploy minden funkcióval egyszerre, majd manuálisan kapcsolják ki, ha probléma",
+        "Integrálj feature-flag telepítést a pipeline-ban: build → test → deploy → feature-flag rollout kontroll",
+        "Ne használjatok feature-flag-et, csak gyors deploy-t",
+        "Telepítsen minden build új szolgáltatást külön pipeline-ban"
+        ],
+        "correctIndex": 1,
+        "explanation": {
+        "hu": "Feature-flag rollout kontroll-al a pipeline részeként automatikusan lehet fokozatosan engedélyezni funkciókat, csökkentve a kockázatot és fenntartva CI/CD sebességet.",
+        "whyCorrect": "Automatizálás + fokozatos rollout = best practice",
+        "whyWrong": [
+            "Mind egyszerre = túl nagy kockázat",
+            "Nem használni = elmaradott gyakorlat",
+            "Külön pipeline = túl sok overhead"
+        ]
+        },
+        "examTip": "Feature-flag + dark-launch → integrate pipeline",
+        "difficulty": "Medium"
+    },
+    {
+        "id": 38,
+        "question": "Your CI/CD pipeline currently uses a monolithic codebase and takes over 30 minutes for a build. The team moves to microservices and wants to reduce build time drastically. Which approach will have the MOST impact?",
+        "options": [
+        "Continue building monolith but on faster hardware",
+        "Convert to microservices and trigger only impacted services builds via dependency mapping",
+        "Delay builds to off-peak hours",
+        "Remove tests to speed up build"
+        ],
+        "correctIndex": 1,
+        "explanation": {
+        "hu": "Microservicesre váltás + dependency mapping, ahol csak az érintett szolgáltatás épül újra, nagy mértékben csökkenti az építési időt és optimalizálja folyamatos integrációt.",
+        "whyCorrect": "Build only what changed = significant time reduction",
+        "whyWrong": [
+            "Faster hardware = költséges és nem a root issue",
+            "Off-peak = késleltetés növekszik",
+            "Teszt eltávolítása = minőség romlik"
+        ]
+        },
+        "examTip": "Microservices + change detection = faster CI",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 39,
+        "question": "A deployment környezetek (dev, staging, prod) között a csapat szeretné biztosítani, hogy ugyanazt a binárist utoljára teszteljék, majd deploy-olják. Milyen megoldást javasolsz?",
+        "options": [
+        "Készíts új build minden környezetre",
+        "Használj build artifact-ot, és promótáld dev → staging → prod anélkül, hogy újra buildelnéd",
+        "Deploy-olj dev-be, majd rebuild stagingre, végül prodba",
+        "Manual build újra staging és prod előtt"
+        ],
+        "correctIndex": 1,
+        "explanation": {
+        "hu": "Azonos build artifact promóciója biztosítja, hogy amit teszteltek, az kerüljön produkcióba — ezzel növeled a megbízhatóságot és csökkented a build varianciát.",
+        "whyCorrect": "What you test is what you deploy = best practice",
+        "whyWrong": [
+            "Új build minden környezetre = variancia",
+            "Rebuild staging előtt = ismételt állapot",
+            "Manual build = nem automatizált"
+        ]
+        },
+        "examTip": "Promote same artifact → no rebuild between envs",
+        "difficulty": "Medium"
+    },
+    {
+        "id": 40,
+        "question": "Your pipeline uses AWS CodePipeline and you want to enforce that every merge to main triggers the pipeline and no direct commits are allowed. Which Git configuration and pipeline combination should you use?",
+        "options": [
+        "Allow direct commits and periodically run pipeline manually",
+        "Use GitHub branch protection rules: require pull request, status checks pass, then Webhook triggers CodePipeline",
+        "Use push triggers only on develop branch",
+        "Use manual review board after commit"
+        ],
+        "correctIndex": 1,
+        "explanation": {
+        "hu": "Branch protection + status checks + webhook-triggered pipeline biztosítja, hogy csak ellenőrzött kód kerüljön be, és azonnal pipeline induljon.",
+        "whyCorrect": "Integration of Git workflow + pipeline best practice",
+        "whyWrong": [
+            "Direct commits = nem kontrollált",
+            "Push on develop = main nem védett",
+            "Manual review board = késleltetett"
+        ]
+        },
+        "examTip": "Branch protection + pipeline trigger",
+        "difficulty": "Easy"
+    },
+    {
+        "id": 41,
+        "question": "A CodeBuild projektet 12 MB/s-nél nagyobb fájlok letöltése lassítja. A build-spec down-loading lépései során az S3 mellé CloudFront-ot javasolnak. Használható ez a build optimalizálásra? Mi a VALÓBAN legjobb megoldás?",
+        "options": [
+        "Igen, CloudFront gyorsít az S3-ra való letöltéseknek",
+        "Nem, inkább használj S3 Transfer Acceleration-t és CodeBuild caching-et",
+        "Igen, de csak ha VPC-n belül vagy",
+        "Nem, csak EC2-vel lehet gyorsítani"
+        ],
+        "correctIndex": 1,
+        "explanation": {
+        "hu": "S3 Transfer Acceleration + CodeBuild caching (pl. LOCAL_SOURCE vagy S3 cache) jobb build-optimalizálás, mint CloudFront, amely nem garantáltan használható build folyamatban.",
+        "whyCorrect": "Kifejezetten build-munkára optimalizált megoldás",
+        "whyWrong": [
+            "CloudFront nem build-letöltésre optimalizált",
+            null,
+            "VPC-n belül nem releváns letöltési sebesség",
+            "EC2 nem feltétlen megoldás"
+        ]
+        },
+        "examTip": "Download speed → S3 Transfer Acceleration + caching",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 42,
+        "question": "Your development team uses SAM (Serverless Application Model) and wants to include infrastructure unit tests (e.g., for AWS Lambda resource definitions) in the CI pipeline. What is the BEST way to integrate this?",
+        "options": [
+        "Deploy to AWS and manually test resources",
+        "Write unit tests with AWS SAM CLI ‘sam validate’ and ‘sam build –cached’, run in CodeBuild before deployment",
+        "Skip infra tests and rely on production monitoring",
+        "Use manual inspection of CloudFormation templates"
+        ],
+        "correctIndex": 1,
+        "explanation": {
+        "hu": "Infra-unit tesztek: SAM CLI validate + build → CI-integrációban futtatható. Ez korán detektálja hibás infra-kódokat.",
+        "whyCorrect": "Automatizált infra validation a pipeline-ban",
+        "whyWrong": [
+            "Deploy teszt után = késői detection",
+            "Skip = kockázat",
+            "Manual inspection = lassú és hibára hajlamos"
+        ]
+        },
+        "examTip": "Infra unit tests → SAM CLI in CI",
+        "difficulty": "Medium"
+    },
+    {
+        "id": 43,
+        "question": "A pipeline build során több régiós komponensek (us-east-1 és eu-west-1) közötti artifact replikáció szükséges az alábbi követelményekkel: alacsony latency, adatduplikálás nélkül. Melyik architektúrát javaslod?",
+        "options": [
+        "Külön pipeline régiónként, nincs replikáció",
+        "Központi régióban artifakt tárolás és S3 Cross-Region Replication (CRR) minden build után",
+        "Build minden régióban újra egymástól függetlenül",
+        "Use ECR image repó csak egy régióban"
+        ],
+        "correctIndex": 1,
+        "explanation": {
+        "hu": "S3 CRR biztosítja, hogy az artifakt más régióban is elérhető alacsony késleltetéssel, adatduplikálás kontroll alatt, centralizált folyamat mellett.",
+        "whyCorrect": "CRR = skálázható multi-region artifact storage",
+        "whyWrong": [
+            "Régiónként külön pipeline = overhead",
+            "Újra build = drága időben és erőforrásban",
+            "ECR csak képekhez, nem általános artifakt"
+        ]
+        },
+        "examTip": "Multi-region artifact → S3 CRR",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 44,
+        "question": "Your pipeline includes static code analysis, license compliance scanning and container image vulnerability scanning. The security team wants a consolidated dashboard of all issues per build. What is the BEST way to achieve this?",
+        "options": [
+        "Send results by email to security team",
+        "Send each scan result individ- ually to CloudWatch Logs",
+        "Push all scan results into Amazon Security Hub findings and build a QuickSight dashboard",
+        "Use local logs only"
+        ],
+        "correctIndex": 2,
+        "explanation": {
+        "hu": "Security Hub integrációval központi scan eredmények kezelhetők, QuickSight-on keresztül vizualizálhatók. Automatizált, skálázható és vizuális megoldás.",
+        "whyCorrect": "Security Hub + QuickSight = integrált eredménykezelés",
+        "whyWrong": [
+            "Email = nem skálázható",
+            "CloudWatch logs = nem konszolidált dashboard",
+            "Local logs = nem elég enterprise"
+        ]
+        },
+        "examTip": "Security scans → Security Hub + QuickSight",
+        "difficulty": "Medium"
+    },
+    {
+        "id": 45,
+        "question": "A pipeline build után a QA csapat egy külön sandbox környezetben futtat teljes end-to-end teszteket. A sandbox ugyanakkora mint a prod, de költségük óriási. Mire javasolnád optimalizálni?",
+        "options": [
+        "Tartsd változatlanul, mert prod-like környezet kell",
+        "Használj spot-példányokat és auto-scale-t a sandbox-ban, hogy csak szükség idején legyen kapacitás",
+        "Csökkentsd a tesztek számát",
+        "Futtasd csak heti egyszer"
+        ],
+        "correctIndex": 1,
+        "explanation": {
+        "hu": "Spot-példányok + auto-scale lehetőséget biztosítanak, hogy tesztkörnyezet költséghatékony, mégis nagy kapacitású legyen amikor szükséges.",
+        "whyCorrect": "Költségoptimalizálás + skálázható környezet",
+        "whyWrong": [
+            "Változatlan költséges",
+            "Teszt csökkentése = kockázat",
+            "Érdekes események ritkábban kapnak észlelést"
+        ]
+        },
+        "examTip": "Sandbox cost optimisation → spot + autoscale",
+        "difficulty": "Medium"
+    },
+    {
+        "id": 46,
+        "question": "Your CI pipeline deploys to an Amazon ECS cluster. You want to enable automatic rollback if the deployed task fails health checks within 5 minutes. Which mechanism should you use?",
+        "options": [
+        "Use CloudWatch alarm + Lambda to stop tasks",
+        "Configure ECS deployment controller type to CODE_DEPLOY and use Blue/Green with automatic rollback",
+        "Monitor health manually and revert tasks",
+        "Use raw ECS service with ’minimum healthy percent’ only"
+        ],
+        "correctIndex": 1,
+        "explanation": {
+        "hu": "ECS Blue/Green deploy (CODE_DEPLOY) támogat rollback-et és beépített egészség-ellenőrzést a szolgáltatás-váltás során.",
+        "whyCorrect": "Native rollback supported Blue/Green on ECS",
+        "whyWrong": [
+            "Lambda = felesleges komplex",
+            "Manual revert = nem automatizált",
+            "Raw ECS szolgáltatás nem ad teljes rollback mechanizmust"
+        ]
+        },
+        "examTip": "ECS automatic rollback → CODE_DEPLOY Blue/Green",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 47,
+        "question": "In your pipeline definition you want to ensure that only commits from authors with approved email domains are allowed to trigger builds. What’s the BEST way to implement this automation?",
+        "options": [
+        "Ignore commit author domain",
+        "Use AWS Lambda in CodePipeline as pre-validation step to check author email domain",
+        "Use GitHub branch protection rules only",
+        "Manually check commit authors"
+        ],
+        "correctIndex": 1,
+        "explanation": {
+        "hu": "Lambda pre-validation step a pipeline-ban lehetővé teszi, hogy commit author email domain-jét ellenőrizhesd automatizáltan, mielőtt build elindulna.",
+        "whyCorrect": "Automatizált pre-validation = integrált és megbízható",
+        "whyWrong": [
+            "Ignore = nincs kontroll",
+            "Branch protect nem domain-szintű author ellenőrzés",
+            "Manual = hibára hajlamos"
+        ]
+        },
+        "examTip": "Author domain check → Lambda pre-validation in pipeline",
+        "difficulty": "Medium"
+    },
+    {
+        "id": 48,
+        "question": "Your CI/CD pipeline triggers on pull request merges and builds artifacts. You need to ensure that commits with high-severity vulnerability findings do not get merged. Which approach should you use?",
+        "options": [
+        "Merge then scan and fix later",
+        "Fail the pull request build if vulnerability severity ≥ HIGH using CodeBuild integration with Snyk or Amazon CodeGuru and block merge via GitHub status check",
+        "Scan only production artefacts",
+        "Ignore vulnerabilities and fix in production"
+        ],
+        "correctIndex": 1,
+        "explanation": {
+        "hu": "Pull request build integrálása statikus vuln scanning-gel és GitHub status check blokkolása, ha HIGH vagy CRITICAL találat van, biztosítja a ‘shift-left security’ modellt.",
+        "whyCorrect": "Automatizált security gate merge-kor",
+        "whyWrong": [
+            "Merge then scan = túl későn",
+            "Only production = kevésbé hatékony",
+            "Ignore = nem felel meg security követelményeknek"
+        ]
+        },
+        "examTip": "Security gate on merge → block if HIGH vulnerabilities",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 49,
+        "question": "You have a CodeBuild project that builds and packages artifacts. The security team requires that the build logs must be encrypted and archived for 7 years in a cost-effective way. What architecture should you implement?",
+        "options": [
+        "Leave logs in CloudWatch only",
+        "Configure CodeBuild to export logs to an S3 bucket with bucket encryption (KMS CMK), lifecycle transition to Glacier Deep Archive after 30 days, retain 7 years",
+        "Store logs in EBS volumes attached to build host",
+        "Send logs to third-party logging service"
+        ],
+        "correctIndex": 1,
+        "explanation": {
+        "hu": "CloudWatch → S3 export with KMS CMK encryption + lifecycle to Glacier Deep Archive = költséghatékony és megfelel hosszú távú retention-nek.",
+        "whyCorrect": "Secure, compliant retention architecture",
+        "whyWrong": [
+            "CloudWatch alone nem 7 év retention költséghatékonyan",
+            "EBS = nincs hosszú-távú archiválás",
+            "Third-party = extra költség, compliance kockázat"
+        ]
+        },
+        "examTip": "Log retention → S3 encryption + Glacier Deep Archive",
+        "difficulty": "Medium"
+    },
+    {
+        "id": 50,
+        "question": "Your pipeline has grown to a point where there are dozens of repositories, builds and deployments. The team needs to track build metrics (duration, success rate, cost) and visualize trends across services. What is the BEST approach?",
+        "options": [
+        "Export CodeBuild metrics manually to Excel",
+        "Use AWS CodeBuild Batch builds + CloudWatch metric filters + Amazon QuickSight dashboard to visualize trends",
+        "Ignore metrics and rely on manual review meetings",
+        "Use CloudWatch dashboards only"
+        ],
+        "correctIndex": 1,
+        "explanation": {
+        "hu": "Batch builds + CloudWatch metric filters + QuickSight segítségével automatizálható a metrikagyűjtés és vizualizáció, skálázható módon.",
+        "whyCorrect": "Automated metric collection + interactive dashboard = best practice",
+        "whyWrong": [
+            "Excel = manual, nem skálázható",
+            "Ignore = nem best practice",
+            "CloudWatch dashboards = kevesebb vizualizációs lehetőség"
+        ]
+        },
+        "examTip": "Build metrics visualization → QuickSight + CloudWatch filters",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 51,
+        "question": "A development team uses a feature branching strategy in Git and merges completed features into a ‘main’ branch once reviewed. They want their pipeline (AWS CodePipeline) to automatically trigger on merge, run unit tests, security scans, and deploy to a staging environment, but only deploy to production after manual approval. Which setup is most efficient?",
+        "options": [
+        "Configure a webhook for Git to trigger CodePipeline on main branch pushes, add CodeBuild for unit tests, a manual approval action, then a CodeDeploy stage to production.",
+        "Schedule CodePipeline to run every hour, include unit tests and security scans, and then deploy to production automatically.",
+        "Use CodeCommit triggers to start a Lambda function that orchestrates unit tests, manual approval and then invokes CodeDeploy.",
+        "Create two separate pipelines: one auto-deploys to staging on branch merge, another manually triggered deploys to production."
+        ],
+        "correctIndex": 0,
+        "explanation": {
+        "hu": "Webhook trigger + CodePipeline automatikus lépések, majd manual approval = legkevesebb operatív overheadgel és inline CI/CD integrációval.",
+        "whyCorrect": "Webhook trigger biztosítja az azonnali indítást, a pipeline lépések integráltan kezelik testet, és a jóváhagyás előzi meg a produkcióra lépést.",
+        "whyWrong": [
+            "Óránkénti futás nem valós idejű, és nem automatizált elég.",
+            "Custom Lambda orchestration feleslegesen komplex.",
+            "Két pipeline fenntartása több overheadet jelent."
+        ]
+        },
+        "examTip": "„automatikus CI + staging + manual approval” → Webhook + CodePipeline + Manual Approval",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 52,
+        "question": "A CodeBuild project builds a Docker image and pushes it to Amazon Elastic Container Registry (ECR). The build spec includes unit tests, integration tests, and image scan. After the build, the image should automatically be deployed to a non-prod cluster. Which buildspec configuration is BEST to optimize time while ensuring quality?",
+        "options": [
+        "Run unit tests and image build in parallel phases in buildspec, then push image and deploy.",
+        "Run unit tests, then integration tests, then image build, then push and deploy, all sequentially.",
+        "Build image first, push to ECR, then run tests by pulling the image in a separate CodeBuild project.",
+        "Run image build and push in one phase, then have a separate pipeline for tests on the image."
+        ],
+        "correctIndex": 2,
+        "explanation": {
+        "hu": "Külön fázisban tesztelni a már épített képet biztosítja, hogy amit deploy-olsz, az azonos mint amit teszteltél. Ez csökkenti a build time-ot és növeli a megbízhatóságot.",
+        "whyCorrect": "Az image előbb készül, majd ugyanaz a image kerül tesztelésre, így minimalizálod a variációt és későbbi hibázás esélyét.",
+        "whyWrong": [
+            "Parallel unit/test + build keverheti a változatokat.",
+            "Túl hosszú sorrend sequential módon lassít.",
+            "Külön pipeline növeli az operatív overheadet."
+        ]
+        },
+        "examTip": "„Build image előbb, aztán teszteld ugyanazt az image-t”",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 53,
+        "question": "Your team maintains three environments (dev, staging, production) with the same pipeline. They want to promote the same artifact through environments without rebuilding at each stage. How should you implement this?",
+        "options": [
+        "Add separate build steps in CodePipeline for each environment that reuse the build output artifact.",
+        "Re-build in each environment stage to ensure environment-specific configuration.",
+        "Use a single pipeline with stages: build → test → deploy to dev; approval → deploy same artifact to staging; approval → deploy same artifact to production.",
+        "Use different pipelines for each environment to match each configuration."
+        ],
+        "correctIndex": 2,
+        "explanation": {
+        "hu": "Azonos artifact-ot végigjuttatni a pipeline-n át minimalizálja a build varianciát és növeli az ismételhetőséget.",
+        "whyCorrect": "Single pipeline és promóciós modell biztosítja a ‘what you test is what you deploy’ elvet.",
+        "whyWrong": [
+            "Separate build lépések növelik a varianciát.",
+            "Re-build minden környezetben feleslegesen növeli időt.",
+            "Több pipeline operatív overheadet okoz."
+        ]
+        },
+        "examTip": "„Promote same artifact” → Single pipeline, test → approval → promote.",
+        "difficulty": "Medium"
+    },
+    {
+        "id": 54,
+        "question": "A pipeline deploy után monitoring és roll-back stratégia szükséges. Mit tegyél, hogy automatikus rollback legyen, ha új kód hibát produkál productionben?",
+        "options": [
+        "Készíts CloudWatch alarm-ot, konfiguráld úgy, hogy trigger-olja a rollback-et a AWS CodeDeploy konfigurációban.",
+        "Használj Lambda-t, ami figyeli a logokat és manuálisan rollback-et hajt végre.",
+        "Állíts be EventBridge szabályt, ami minden deploy után figyeli a verziót és manuálisan visszavált.",
+        "Konfigurálj CodePipeline-ban monitoring műveletet, ami figyeli és ha hiba akkor manual approval-t kér."
+        ],
+        "correctIndex": 0,
+        "explanation": {
+        "hu": "CodeDeploy támogatja CloudWatch alarm-okhoz kapcsolódó automatic rollback-et. Ez a legautomatikusabb és legkevesebb operatív overheadel működő megoldás.",
+        "whyCorrect": "Native rollback integrálható CloudWatch alarm-okkal, nincs szükség extra Lambda-ra.",
+        "whyWrong": [
+            "Lambda megoldás műveletigényes.",
+            "EventBridge nem célzott rollback mechanizmus.",
+            "Manual review marad-lehetőség, de nem automatikus."
+        ]
+        },
+        "examTip": "„Automatic rollback” → CloudWatch alarm + CodeDeploy setting",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 55,
+        "question": "A CI pipeline tartalmazza a következő lépéseket: build, unit test, integration test, package, publish artifact. A dev csapat most azt kéri, hogy a publish-nél automatikusan legyen version tag (pl. 1.0.0-20251025-123). Mi a LEGjobb módja az automatizálásra?",
+        "options": [
+        "Használj CodeBuild buildspec-ben környezeti változót, amely generálja a verzió-taget, majd Git tag-et és push.",
+        "Kérj manuális verziójobbváhagyást a csapat részéről, és manuálisan készíts Git tag-et.",
+        "Hozz létre Lambda-t, ami figyeli a Git főágat és automatikusan tag-el.",
+        "A fejlesztők maguk adják meg a verzió-taget minden merge- előtt."
+        ],
+        "correctIndex": 0,
+        "explanation": {
+        "hu": "Automatikusan generált tag build-fázisban biztosítja, hogy minden artifact reproducible módon kap verziót, és nincs manuális lépés.",
+        "whyCorrect": "CodeBuild buildspec-ben futó tag-generálás automatizál, low overhead-del.",
+        "whyWrong": [
+            "Manuális jóváhagyás lassítja a flow-t.",
+            "Lambda monitoring Git eseményekre túl komplex.",
+            "Fejlesztők kézzel tag-elése hibalehetőséget rejt."
+        ]
+        },
+        "examTip": "„Automatikus verzió-tag” → buildspec környezeti változó",
+        "difficulty": "Medium"
+    },
+    {
+        "id": 56,
+        "question": "In a multi-account structure using AWS CodePipeline managed via AWS CloudFormation StackSets, how should you implement a new pipeline change (e.g., additional manual approval step) across all accounts while minimizing operational overhead?",
+        "options": [
+        "Update each pipeline individually in every account.",
+        "Use CloudFormation StackSets from management account with a template update and automatic account propagation.",
+        "Use a GitHub Actions workflow to update pipelines via AWS CLI per account.",
+        "Create a custom script to assume roles in each account and apply updates."
+        ],
+        "correctIndex": 1,
+        "explanation": {
+        "hu": "StackSets lehetővé teszi a sablonfrissítést egyszerre több számlára. Ez minimális operatív overhead-et és következetességet biztosít.",
+        "whyCorrect": "Centralizált update using StackSets = skálázható és automatizált.",
+        "whyWrong": [
+            "Egyesével történő update magas overhead.",
+            "GitHub Actions per-account script same overhead as manual.",
+            "Custom script fenntartása és jogosultság kezelése bonyolult."
+        ]
+        },
+        "examTip": "„Multi-account pipeline update” → CloudFormation StackSets",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 57,
+        "question": "Your pipeline uses a custom Docker image for build in CodeBuild. The security team requires that every build runs in a fresh container with no persistent build state and uses the latest patched base image. How should you enforce this requirement with minimal maintenance?",
+        "options": [
+        "Hardcode the image version in the buildspec and update manually monthly.",
+        "Use CodeBuild imagePuller to pull the latest base image at build time.",
+        "Use a CodePipeline change detection trigger for the image repository and update the build project when a new base image version is pushed.",
+        "Use CodeBuild managed image with auto-update enabled and schedule a monthly review."
+        ],
+        "correctIndex": 2,
+        "explanation": {
+        "hu": "Image change detection → trigger build-projekt frissítése automatikusan, minimalizálva kézi lépést és biztosítva legfrissebb image.",
+        "whyCorrect": "Automatizált trigger a legújabb képverzióra reagál, megfelel a security követelménynek.",
+        "whyWrong": [
+            "Hardcode manuális update-et követ.",
+            "imagePuller nem létezik CodeBuild-ben.",
+            "Managed image auto-update nem garantálja a testelt bazis-image-t."
+        ]
+        },
+        "examTip": "„CI használja mindig latest patched base image” → trigger alapján pipeline update",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 58,
+        "question": "During the testing phase of the SDLC pipeline, the team wants to automatically generate a release report that includes build results, test coverage, and vulnerability scan results. What is the BEST approach to implement this?",
+        "options": [
+        "Use CodeBuild to output all test results to CloudWatch Logs and use a scheduled Lambda to parse logs and generate PDF report in S3.",
+        "Configure CodeBuild to publish results to AWS CodeBuild Test Reports and use Amazon QuickSight on the generated data in S3 for dashboard/report.",
+        "Have developers manually export reports from their IDE and upload to S3.",
+        "Use CloudWatch Metrics for each result and visualize them in CloudWatch dashboard only."
+        ],
+        "correctIndex": 1,
+        "explanation": {
+        "hu": "CodeBuild Test Reports + data-lake S3 + QuickSight = automatikus, skálázható és vizualizálható jelentéskészítést biztosít.",
+        "whyCorrect": "Integrált megoldás CI/Test/Reporting folyamatra, kevés kézi lépést igényel.",
+        "whyWrong": [
+            "Lambda parsing manual munkát jelent.",
+            "Fejlesztői kézi export hibalehetőséget jelent.",
+            "CloudWatch dashboard nem kiterjedt jelentés-generálásra."
+        ]
+        },
+        "examTip": "„Automatikus release riport” → CodeBuild Test Reports + S3 + QuickSight",
+        "difficulty": "Medium"
+    },
+    {
+        "id": 59,
+        "question": "A development team demands that all artifacts stored in S3 for deployment must be immutable once versioned. They also require a CI pipeline that ensures rollback is possible to any version. What architecture supports both requirements BEST?",
+        "options": [
+        "Enable versioning on S3 bucket, disable overwrite, use CodePipeline with manual approval and CloudFormation change sets for rollback.",
+        "Use DynamoDB to track versions, store artifacts unversioned in S3, and use Lambda to enforce immutability.",
+        "Use S3 bucket with versioning and lifecycle policy to delete old versions, CodePipeline uses latest version always.",
+        "Use ECR for artifacts instead of S3, trust image tags only and rely on immutable tagging."
+        ],
+        "correctIndex": 0,
+        "explanation": {
+        "hu": "S3 versioning + disable overwrite + pipeline promóció biztosítja mind az immutabilitást, mind a visszaállítási lehetőséget.",
+        "whyCorrect": "Native S3 versioning + immutability + pipeline rollback integráció megfelelő gyakorlat.",
+        "whyWrong": [
+            "DynamoDB script-megoldás túl komplex.",
+            "Lifecycle policy törli verziókat → nem garantál rollback.",
+            "ECR nem általános artifact tároló minden típusra."
+        ]
+        },
+        "examTip": "„Immutable artifact + rollback” → S3 versioning + pipeline",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 60,
+        "question": "Your SDLC pipeline runs thousands of builds per day across many microservices. The team wants to reduce overall build time without compromising test coverage or artifact quality. What strategy should be applied?",
+        "options": [
+        "Increase CodeBuild compute size and let all tests run in one monolithic project.",
+        "Use CodeBuild batch mode to execute multiple microservice builds in parallel, share cache layers for dependencies, and publish metrics to CodeBuild build reports.",
+        "Reduce test coverage to speed up builds.",
+        "Use separate pipelines for each microservice with no shared logic."
+        ],
+        "correctIndex": 1,
+        "explanation": {
+        "hu": "Batch mode + shared cache layers + parallel builds minimalizálja az időt, fenntartva a minőséget.",
+        "whyCorrect": "AWS CodeBuild batch builds támogatja párhuzamos építést, cache-elés csökkenti időt.",
+        "whyWrong": [
+            "Nagyobb gép nem feltétlenül hatékonyabb.",
+            "Teszt lefedettség csökkentése kockázatos.",
+            "Pipelines elkülönítése növeli overheadet."
+        ]
+        },
+        "examTip": "„Több build → párhuzamos + cache” → CodeBuild batch mode",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 61,
+        "question": "A large monolithic application is being refactored into microservices. The CI/CD pipeline needs to detect when a service’s code change impacts another service (shared library). Which strategy provides the BEST automation?",
+        "options": [
+        "Manually tag and deploy each microservice when a shared library changes",
+        "Use a monorepo with dependency graph tooling that triggers builds of impacted microservices automatically",
+        "Break each service into separate repos and rebuild all when shared library changes",
+        "Ignore shared library changes and deploy services regularly"
+        ],
+        "correctIndex": 1,
+        "explanation": {
+        "hu": "Monorepo + dependency graph lehetővé teszi, hogy amikor a shared library változik, csak az érintett mikro-szolgáltatások épüljenek újra. Automatizál és csökkenti a felesleges build-eket.",
+        "whyCorrect": "Automatikus dependency graph + trigger = hatékony és skálázható",
+        "whyWrong": [
+            "Manuális tagging lassú és hibás lehet",
+            "Minden rebuild feleslegesen idő- és erőforrás-igényes",
+            "Ignorálás hibához vezethet"
+        ]
+        },
+        "examTip": "Monorepo + dependency graph → csak érintett build",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 62,
+        "question": "Your CI pipeline runs unit tests and integration tests, but acceptance tests still run manually. You want to automate acceptance tests in a production-like environment but avoid affecting live users. What should you implement?",
+        "options": [
+        "Run acceptance tests in production with traffic diverted to test instances",
+        "Run acceptance tests in staging that mirrors production and then promote artifact",
+        "Run acceptance tests after production release and roll back if failure",
+        "Skip acceptance tests since integration tests cover them"
+        ],
+        "correctIndex": 1,
+        "explanation": {
+        "hu": "Acceptance teszteknek production-like, de izolált környezetben kell futniuk, mégis automatizálva legyenek. Staging mirror környezet erre ideális.",
+        "whyCorrect": "Staging mirror + automatikus acceptance = minimal risk + automatizálás",
+        "whyWrong": [
+            "Production tesztelés veszélyes live felhasználóknál",
+            "Teszt után rollback = túl későn",
+            "Kizárása csökkenti minőséget"
+        ]
+        },
+        "examTip": "Acceptance tests → Production-like but isolated environment",
+        "difficulty": "Medium"
+    },
+    {
+        "id": 63,
+        "question": "A pipeline push után több technológia használatával készül (Java, Python, Go). To standardize the build, the team wants to use same build infrastructure and avoid multiple CodeBuild projects. Which solution is BEST?",
+        "options": [
+        "Create one CodeBuild project that uses a container image containing all runtimes and run each language in separate buildphase",
+        "Create separate CodeBuild projects for each language",
+        "Use EC2 instances with custom scripts instead of CodeBuild",
+        "Use one CodeBuild project but detect language and delegate to microservices"
+        ],
+        "correctIndex": 0,
+        "explanation": {
+        "hu": "Egy CodeBuild projekt több runtime-mal – konténerbe integrálva –, lehetővé teszi standardizált build környezetet, kevesebb projekt-overhead-dal.",
+        "whyCorrect": "Single projekt + unified container = konszisztens, kevesebb fenntartás",
+        "whyWrong": [
+            "Több projekt overhead-dal jár",
+            "EC2 custom script = több operatív terhet",
+            "Delegálás mikro-szolgáltatásokra felesleges komplex"
+        ]
+        },
+        "examTip": "Multi-language build → one project with unified container",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 64,
+        "question": "Your build artifacts include proprietary data that must not leave your organization’s VPC. What is the MOST SECURE way to store and deploy those artifacts in your pipeline?",
+        "options": [
+        "Store artifacts in an S3 bucket without encryption and restrict IAM",
+        "Use an S3 VPC endpoint, KMS CMK with restricted policy, deploy with pipeline inside the same VPC",
+        "Push artifacts to a public registry but set access to private",
+        "Encrypt artifacts client-side and store in S3 public bucket"
+        ],
+        "correctIndex": 1,
+        "explanation": {
+        "hu": "S3 VPC endpoint + customer-managed KMS key + policy restrict = artefaktok soha nem mennek internetre, csak VPC-n belül maradnak.",
+        "whyCorrect": "Legmagasabb biztonság, adat nem hagyja el a VPC-t",
+        "whyWrong": [
+            "Encryption nélkül nincs elegendő védelem",
+            "Publikus registry nem private",
+            "Client-side encryption nem elegendő az irányítás szempontjából"
+        ]
+        },
+        "examTip": "Secure artifact storage → S3 VPC endpoint + CMK",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 65,
+        "question": "The team wants to enforce that every change to infrastructure code (Terraform) triggers automated tests, linting, and policy checks before being applied. Which model should be implemented?",
+        "options": [
+        "Manual review before Terraform apply",
+        "Use GitHub pull request flow, GitHub Actions or CodeBuild for linting and policy checks, then merge triggers Terraform apply via CodePipeline",
+        "Apply Terraform directly in production and fix issues later",
+        "Run Terraform locally then commit state"
+        ],
+        "correctIndex": 1,
+        "explanation": {
+        "hu": "Pull request flow + automated linting and policy checks biztosítja a “shift-left” infra-code minőséget és megfelelést.",
+        "whyCorrect": "Automatizál és korán felfedez hibákat",
+        "whyWrong": [
+            "Manuális review lassú",
+            "Közvetlen apply kockázatos",
+            "Helyi futtatás nincs központilag ellenőrizve"
+        ]
+        },
+        "examTip": "Infra code → PR + automatikus lint + policy check",
+        "difficulty": "Medium"
+    },
+    {
+        "id": 66,
+        "question": "A requirement: every build produces an immutable docker image tagged with semantic versioning, the same image must be deployed across all environments. What pipeline architecture ensures immutability and traceability?",
+        "options": [
+        "Build image in dev, retag and rebuild for prod",
+        "Build image once, store tag & digest, promote that exact image across dev → staging → prod",
+        "Build separate image per environment",
+        "Use latest tag always and update"
+        ],
+        "correctIndex": 1,
+        "explanation": {
+        "hu": "Azonos image egyszer épül el → digest rögzítve → minden környezet ugyanazt használja. Így biztosítod az ‘What you test is what you deploy’ elvet.",
+        "whyCorrect": "Immutability + traceability modell",
+        "whyWrong": [
+            "Rebuild változást okoz",
+            "Separate image per environment = variancia",
+            "latest tag = nem reprodukálható"
+        ]
+        },
+        "examTip": "Same image across envs → build once, digest store",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 67,
+        "question": "A pipeline currently deploys to a single region. Business now requires multi-region deployment for disaster tolerance, using same pipeline. What is BEST approach?",
+        "options": [
+        "Duplicate pipeline for each region manually",
+        "Use CodePipeline with cross-region actions replicating artifacts and deploying to each region in stages",
+        "Use CloudFormation StackSets only",
+        "Use manual triggering per region"
+        ],
+        "correctIndex": 1,
+        "explanation": {
+        "hu": "CodePipeline cross-region stages lehetővé teszik, hogy egy pipeline több régióba deploy-oljon. Egységes flow, kevesebb overhead.",
+        "whyCorrect": "Native multi-region support CodePipeline-ban",
+        "whyWrong": [
+            "Duplikált pipeline = overhead",
+            "StackSets nem elég deploy-mechanizmus több régióba",
+            "Manual trigger = nincs automatizálás"
+        ]
+        },
+        "examTip": "Multi-region deployment → single pipeline with cross-region actions",
+        "difficulty": "Medium"
+    },
+    {
+        "id": 68,
+        "question": "The test coverage for your codebase needs to be published to stakeholders automatically after each build, with trend graphs. Which solution is BEST to implement?",
+        "options": [
+        "Attach test coverage artifact in S3 and send email per build",
+        "Use CodeBuild Test Reports feature and export results to Amazon Athena + QuickSight for dashboards",
+        "Generate coverage report locally and manually upload",
+        "Send data to CloudWatch metrics and use dashboard"
+        ],
+        "correctIndex": 1,
+        "explanation": {
+        "hu": "Test Reports + Athena + QuickSight = automatizált, trendkövetésre alkalmas és grafikusan megjeleníthető jelentés.",
+        "whyCorrect": "Skálázható, automatizált és vizualizálható megoldás",
+        "whyWrong": [
+            "Per-build email nem trendkövethető",
+            "Manuális upload = lassú",
+            "CloudWatch dashboard nem kifejezetten test coverage-re",
+            " "
+        ]
+        },
+        "examTip": "Coverage trend → Test Reports + Athena + QuickSight",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 69,
+        "question": "During a build, secret-scanning must be performed before any credentials are used in the pipeline. What is BEST practice for this requirement?",
+        "options": [
+        "Add secret-scanning step as first phase in CodeBuild buildspec.yml",
+        "Rely on developers to not commit secrets",
+        "Use CI linting job only",
+        "Scan in production logs afterwards"
+        ],
+        "correctIndex": 0,
+        "explanation": {
+        "hu": "Secret-scanning build-fázis elején biztosítja, hogy kódba ne kerüljenek érzékeny adatok — shift-left security modell.",
+        "whyCorrect": "Automation + early detection = legjobb gyakorlat",
+        "whyWrong": [
+            "Fejlesztők megbízhatóságára hagyatkozni kockázatos",
+            "Csak linting nem elég mély",
+            "Production log után detection túl késő"
+        ]
+        },
+        "examTip": "Secret scanning → build remains first phase",
+        "difficulty": "Medium"
     }
   ],
   "flashcards": [
